@@ -2,10 +2,12 @@
 //
 
 #include <iostream>
+#include "HeightMap.h"
 
 int main()
 {
-    std::cout << "Hello World!\n";
+    HeightMap hm = HeightMap(25, 24);
+    std::cout << hm.getWidth() << ", " << hm.getLength() << std::endl;
 }
 
 // Exécuter le programme : Ctrl+F5 ou menu Déboguer > Exécuter sans débogage
