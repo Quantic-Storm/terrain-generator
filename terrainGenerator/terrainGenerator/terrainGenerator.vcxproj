@@ -139,9 +139,11 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
+    <ClCompile Include="Erosion.cpp" />
     <ClCompile Include="terrainGenerator.cpp" />
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="Erosion.h" />
     <ClInclude Include="HeightMap.h" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
