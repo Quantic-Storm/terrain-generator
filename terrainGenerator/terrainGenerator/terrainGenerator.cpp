@@ -3,12 +3,21 @@
 
 #include <iostream>
 #include "HeightMap.h"
+#include "Perlin.h"
 
+/*
 int main()
 {
     HeightMap hm = HeightMap(25, 24);
     std::cout << hm.getWidth() << ", " << hm.getLength() << std::endl;
+}*/
+
+
+//main de test perlin
+int main() {
+
 }
+
 
 // Exécuter le programme : Ctrl+F5 ou menu Déboguer > Exécuter sans débogage
 // Déboguer le programme : F5 ou menu Déboguer > Démarrer le débogage
