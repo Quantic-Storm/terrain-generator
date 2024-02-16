@@ -6,6 +6,7 @@
 
 int main()
 {
+    std::srand(time(nullptr));
     HeightMap hm = HeightMap(25, 24);
     std::cout << hm.getWidth() << ", " << hm.getLength() << std::endl;
 }

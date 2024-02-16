@@ -1,6 +1,9 @@
 #pragma once
 
 #include "HeightMap.h"
+#include <math.h>
+
+#define PI 3.14159265358979323846
 
 struct RainDrop
 {
@@ -33,8 +36,21 @@ private:
 	 * @param heighMap The map where the droplet will be generated.
 	 * @return A RainDrop structure representing the generated Droplet
 	 */
-	RainDrop createDroplet(const HeightMap& heightMap);
+	RainDrop createDroplet(HeightMap& heightMap);
 
+	/**
+	 * Method that return the height of a rain drop on a given heightMap
+	 * @param heighMap The map to consider.
+	 * @param droplet The rain drop to consider.
+	 * @return The droplet's interpolated height
+	 */
+	float interpolatedHeight(HeightMap& heightMap, const RainDrop& droplet);
+
+	std::vector<float> interpolatedGradient(HeightMap& heightMap, const RainDrop& droplet);
+
+	void ErodeFrom(HeightMap& heightMap, const RainDrop& droplet, float amountToErode);
+
+	void DepositOn(HeightMap& heightMap, const RainDrop& droplet, float amountToDeposit);
 
 };
 
