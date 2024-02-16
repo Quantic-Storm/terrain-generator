@@ -14,8 +14,12 @@ int main()
 
 
 //main de test perlin
-int main() {
 
+int main() {
+    Perlin p(6874163524165342);
+    HeightMap* hm = p.generate(0, 0, 200, 200, 20);
+    hm->print();
+    delete(hm);
 }
 
 

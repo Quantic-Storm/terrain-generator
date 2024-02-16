@@ -11,11 +11,11 @@ private :
 
 
 	//allow to shuffle the values of randoms
-	unsigned char getVecX(int xVec) {
-		return randoms[abs(xVec * 3 % 256)];
+	unsigned char getVecX(int xVec, int yVec) {
+		return randoms[abs((xVec * 3 + yVec-2) % 256)];
 	}
-	unsigned char getVecY(int yVec) {
-		return randoms[abs(yVec * -5 % 256)];
+	unsigned char getVecY(int xVec, int yVec) {
+		return randoms[abs((yVec * -5 + xVec) % 256)];
 	}
 
 public :
@@ -24,7 +24,7 @@ public :
 	Perlin(Perlin& p) = default;
 	~Perlin() = default;
 
-	HeightMap& generate(int xMin, int yMin, int xMax, int yMax, size_t chunkSize);
+	HeightMap* generate(int xMin, int yMin, int xMax, int yMax, int chunkSize);		// free le pointeur !
 	void changeSeed(long newSeed);
 	long getSeed() { return seed; }
 
