@@ -24,7 +24,7 @@ public :
 	Perlin(Perlin& p) = default;
 	~Perlin() = default;
 
-	HeightMap* generate(int xMin, int yMin, int xMax, int yMax, int chunkSize);		// free le pointeur !
+	HeightMap* generate(unsigned int xSize, unsigned int ySize, int chunkSize);		// free le pointeur !
 	void changeSeed(long newSeed);
 	long getSeed() { return seed; }
 

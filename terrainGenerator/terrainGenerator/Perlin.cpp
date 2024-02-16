@@ -28,16 +28,13 @@ void Perlin::changeSeed(long newSeed) {
 	}
 }
 
-HeightMap* Perlin::generate(int xMin, int yMin, int xMax, int yMax, int chunkSize) {
-	if (xMin > xMax || yMin > yMax) throw invalid_argument("negative size");
+HeightMap* Perlin::generate(unsigned int xSize, unsigned int ySize, int chunkSize) {
 
-
-	unsigned int xSize = xMax - xMin, ySize = yMax - yMin;
 	int x, y;
 	HeightMap* res = new HeightMap(xSize, ySize);
 
-	for (x = xMin; x < xMax; x++) {
-		for (y = yMin; y < yMax; y++) {
+	for (x = 0; x < xSize; x++) {
+		for (y = 0; y < ySize; y++) {
 			vector<unsigned char> v1(2), v2(2), v3(2), v4(2);
 			vector<float> v1Norm(2), v2Norm(2), v3Norm(2), v4Norm(2);
 			vector<float> v1Pos(2), v2Pos(2), v3Pos(2), v4Pos(2);
@@ -83,8 +80,6 @@ HeightMap* Perlin::generate(int xMin, int yMin, int xMax, int yMax, int chunkSiz
 			v3Pos[0] /= chunkSize; v3Pos[1] /= chunkSize;
 			v4Pos[0] /= chunkSize; v4Pos[1] /= chunkSize;
 
-			
-
 			float t1 = (float) abs((int) (x % chunkSize)) / chunkSize;
 			float t2 = (float) abs((int) (y % chunkSize)) / chunkSize;
 
@@ -93,7 +88,7 @@ HeightMap* Perlin::generate(int xMin, int yMin, int xMax, int yMax, int chunkSiz
 
 			float h1 = Utils::interpolate(Utils::dotProduct(v1Pos, v1Norm), Utils::dotProduct(v2Pos, v2Norm), w1);
 			float h2 = Utils::interpolate(Utils::dotProduct(v3Pos, v3Norm), Utils::dotProduct(v4Pos, v4Norm), w1);
-			res->setHeightValue(x - xMin, y - yMin, Utils::interpolate(h1, h2, w2));
+			res->setHeightValue(x, y, Utils::interpolate(h1, h2, w2));
 		}
 	}
 	return res;
