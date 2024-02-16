@@ -1,7 +1,15 @@
 #include "Erosion.h"
 
 
-void Erosion::applyOn(HeightMap& heightMap)
+void Erosion::applyOn(HeightMap& heightMap, unsigned int nbDroplets)
+{
+	for (unsigned int i = 0; i < nbDroplets; i++)
+	{
+		applyDroplet(heightMap);
+	}
+}
+
+void Erosion::applyDroplet(HeightMap& heightMap)
 {
 	// Apply erosion
 	const float inertia = 0.5; // [0, 1]
@@ -17,6 +25,11 @@ void Erosion::applyOn(HeightMap& heightMap)
 
 	for (unsigned int nbIter = 0; nbIter < 50; nbIter++)
 	{
+		// Checking if droplet is out of bound
+		if ((droplet.pos[0] < 0) || (droplet.pos[0] >= heightMap.getWidth()) || (droplet.pos[1] < 0) || (droplet.pos[1] >= heightMap.getLength()))
+		{
+			break;
+		}
 
 		// Calculate, from droplet's surroundings, its current height and direction of descent
 		std::vector<float> gradient = interpolatedGradient(heightMap, droplet);
@@ -44,6 +57,14 @@ void Erosion::applyOn(HeightMap& heightMap)
 		// Move the droplet in that direction and get its new position
 		droplet.pos[0] = droplet.pos[0] + newDir_X;
 		droplet.pos[1] = droplet.pos[1] + newDir_Y;
+		droplet.dir[0] = newDir_X;
+		droplet.dir[1] = newDir_Y;
+
+		// Checking if droplet is out of bound (Is there a way without breaking the loop ?)
+		if ((droplet.pos[0] < 0) || (droplet.pos[0] >= heightMap.getWidth()) || (droplet.pos[1] < 0) || (droplet.pos[1] >= heightMap.getLength()))
+		{
+			break;
+		}
 
 		// Check its new height and calculate deltaHeight = old - new
 		float newHeight = interpolatedHeight(heightMap, droplet);
@@ -81,7 +102,9 @@ void Erosion::applyOn(HeightMap& heightMap)
 		}
 
 		// We update the droplet's speed and amount of water
-		droplet.speed = sqrt(droplet.speed * droplet.speed + deltaHeight * gravity);
+		float squared_speed = droplet.speed * droplet.speed - deltaHeight * gravity;
+		if (squared_speed < 0) { squared_speed = 0; }
+		droplet.speed = sqrt(squared_speed);
 		droplet.water = droplet.water * (1 - evaporationRate);
 
 
@@ -104,10 +127,10 @@ RainDrop Erosion::createDroplet(HeightMap& heightMap) // Mettre heightMap en con
 	float dir_y = sin(angle * 2.0 * PI);
 
 	RainDrop droplet;
-	droplet.pos[0] = x;
-	droplet.pos[1] = y;
-	droplet.dir[0] = dir_x;
-	droplet.dir[1] = dir_y;
+	droplet.pos.push_back(x);
+	droplet.pos.push_back(y);
+	droplet.dir.push_back(dir_x);
+	droplet.dir.push_back(dir_y);
 
 	droplet.water = 1;
 	droplet.sediment = 0;
@@ -124,11 +147,14 @@ float Erosion::interpolatedHeight(HeightMap& heightMap, const RainDrop& droplet)
 	float u = droplet.pos[0] - x;
 	float v = droplet.pos[1] - y;
 
+	unsigned int x1 = (x+1 >= heightMap.getWidth() ? x : x + 1);
+	unsigned int y1 = (y+1 >= heightMap.getLength() ? y : y + 1);
+
 	// Get height of the pixels (x, y) (x+1, y) (x, y+1) (x+1, y+1)
 	float PXY = heightMap.getHeightValue(x, y);
-	float PX1Y = heightMap.getHeightValue(x + 1, y);
-	float PXY1 = heightMap.getHeightValue(x, y + 1);
-	float PX1Y1 = heightMap.getHeightValue(x + 1, y + 1);
+	float PX1Y = heightMap.getHeightValue(x1, y);
+	float PXY1 = heightMap.getHeightValue(x, y1);
+	float PX1Y1 = heightMap.getHeightValue(x1, y1);
 
 	float height = (PXY * (1 - u) * (1 - v) + PX1Y * u * (1 - v) + PXY1 * (1 - u) * v + PX1Y1 * u * v);
 	
@@ -145,11 +171,14 @@ std::vector<float> Erosion::interpolatedGradient(HeightMap& heightMap, const Rai
 	float u = droplet.pos[0] - x;
 	float v = droplet.pos[1] - y;
 
+	unsigned int x1 = (x+1 >= heightMap.getWidth() ? x : x + 1);
+	unsigned int y1 = (y+1 >= heightMap.getLength() ? y : y + 1);
+
 	// Get height of the pixels (x, y) (x+1, y) (x, y+1) (x+1, y+1)
 	float PXY = heightMap.getHeightValue(x, y);
-	float PX1Y = heightMap.getHeightValue(x + 1, y);
-	float PXY1 = heightMap.getHeightValue(x, y + 1);
-	float PX1Y1 = heightMap.getHeightValue(x + 1, y + 1);
+	float PX1Y = heightMap.getHeightValue(x1, y);
+	float PXY1 = heightMap.getHeightValue(x, y1);
+	float PX1Y1 = heightMap.getHeightValue(x1, y1);
 
 	float gradient_X = (PX1Y - PXY) * (1 - v) + (PX1Y1 - PXY1) * v;
 	float gradient_Y = (PXY1 - PXY) * (1 - u) + (PX1Y1 - PX1Y) * u;
@@ -215,7 +244,11 @@ void Erosion::DepositOn(HeightMap& heightMap, const RainDrop& droplet, float amo
 
 	// Depositing sediments
 	heightMap.setHeightValue(x, y, heightMap.getHeightValue(x, y) + XY);
-	heightMap.setHeightValue(x+1, y, heightMap.getHeightValue(x+1, y) + X1Y);
-	heightMap.setHeightValue(x, y+1, heightMap.getHeightValue(x, y+1) + XY1);
-	heightMap.setHeightValue(x+1, y+1, heightMap.getHeightValue(x+1, y+1) + X1Y1);
+
+	if (x+1 < heightMap.getWidth())
+		heightMap.setHeightValue(x+1, y, heightMap.getHeightValue(x+1, y) + X1Y);
+	if(y+1 < heightMap.getLength())
+		heightMap.setHeightValue(x, y+1, heightMap.getHeightValue(x, y+1) + XY1);
+	if(x+1 < heightMap.getWidth() && y+1 < heightMap.getLength())
+		heightMap.setHeightValue(x+1, y+1, heightMap.getHeightValue(x+1, y+1) + X1Y1);
 }

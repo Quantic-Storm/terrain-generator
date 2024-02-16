@@ -26,8 +26,16 @@ public:
 	 * Method that applies erosion on a given heightMap
 	 * Doesn't into account an erosion Map yet (could be useful to know where it is more friable than wherever else)
 	 * @param heighMap The map to apply erosion to.
+	 * @param nbDroplets The total number of rain drop to apply
 	 */
-	void applyOn(HeightMap& heightMap);
+	void applyOn(HeightMap& heightMap, unsigned int nbDroplets);
+
+	/**
+	 * Method which will spawn a droplet at a random position and handle its descent on the given heightMap
+	 * The height map will be eroded on the droplet path and updated
+	 * @param heightMap The height Map to erode with a droplet
+	 */
+	void applyDroplet(HeightMap& heightMap);
 
 private:
 
@@ -46,10 +54,31 @@ private:
 	 */
 	float interpolatedHeight(HeightMap& heightMap, const RainDrop& droplet);
 
+	/**
+	 * Method that return the interpolated Gradient of the given height map slope the given droplet is positionned
+	 * Return two values, one for each interpolation axis (X, Y)
+	 * @param heightMap The height map where we will calculate the gradient
+	 * @param droplet The droplet (whose position is on the heightMap)
+	 * @return A std::vector<float> corresponding to the interpolated Gradient
+	 */
 	std::vector<float> interpolatedGradient(HeightMap& heightMap, const RainDrop& droplet);
 
+	/**
+	 * Method which Erode a given amount from the given height map according to a given droplet
+	 * The height map is updated on the droplet position and the eroded amount is calculated according to the droplet size and position.
+	 * @param heightMap The heightMap to erode
+	 * @param droplet The droplet which will erode the heightMap
+	 * @param amountToErode The total amount of eroded material
+	 */
 	void ErodeFrom(HeightMap& heightMap, const RainDrop& droplet, float amountToErode);
 
+	/**
+	 * Method which Deposit a given amount on the given height map according to a given droplet
+	 * The height map is updated on the droplet position and the deposited amount is calculated according to the droplet position.
+	 * @param heightMap The heightMap which will receive the deposit
+	 * @param droplet The droplet which will deposit sediment
+	 * @param amountToErode The total amount of deposited sediment
+	 */
 	void DepositOn(HeightMap& heightMap, const RainDrop& droplet, float amountToDeposit);
 
 };

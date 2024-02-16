@@ -4,6 +4,7 @@
 #include <iostream>
 #include "HeightMap.h"
 #include "Perlin.h"
+#include "Erosion.h"
 
 /*
 int main()
@@ -19,6 +20,11 @@ int main() {
     Perlin p(6874163524165342);
     HeightMap* hm = p.generate(200, 200, 20);
     hm->print();
+
+    // Applying erosion
+    Erosion erosion;
+    erosion.applyOn(*hm, 200);
+
     delete(hm);
 }
 
