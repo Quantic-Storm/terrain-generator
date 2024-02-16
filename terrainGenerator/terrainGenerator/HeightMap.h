@@ -37,11 +37,39 @@ public:
 			for (float el : col) {
 				if (el < min) min = el;
 				if (el > max) max = el;
-				cout << ((el > 0) ? "#" : " ");
+				cout << Value_character(el);
 			}
 			cout << endl;
 		}
 		cout << "min = " << min << ", max = " << max << endl;
+	}
+
+	string Value_character(float value)
+	{
+		string symbole = "#"; // default symbole for higher out of bound value
+		std::vector<string> liste;  // liste of symbols from low value to high value
+
+		liste.push_back(" ");
+		liste.push_back(":");
+		liste.push_back("-");
+		liste.push_back("=");
+		//liste.push_back("|");
+		liste.push_back("I");
+		//liste.push_back("O");
+		liste.push_back("0");
+		liste.push_back("@");
+
+		for (unsigned int i = 0; i < liste.size(); i++)
+		{
+			if (value < (i * 1.0/liste.size()) - 0.25)
+			{
+				symbole = liste[i];
+				break;
+			}
+		}
+
+		return symbole;
+
 	}
 
 };

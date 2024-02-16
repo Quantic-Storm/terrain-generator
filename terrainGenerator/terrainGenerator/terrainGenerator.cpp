@@ -25,6 +25,8 @@ int main() {
     Erosion erosion;
     erosion.applyOn(*hm, 200);
 
+    hm->print();
+
     delete(hm);
 }
 
