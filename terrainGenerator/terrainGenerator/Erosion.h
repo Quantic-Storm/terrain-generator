@@ -18,6 +18,11 @@ class Erosion
 {
 private:
 	float values; // necessarry constants for erosion (None for now)
+	const float inertia = 0.5; // [0, 1]
+	const float depositionRate = 0.9; // [0, 1]
+	const float evaporationRate = 0.1; // [0, 1]
+	const float radius = 0.5; // [0, 1]
+	const float erosionFactor = 1; // [0, 1]
 
 public:
 	Erosion() : values(0) {};

@@ -12,12 +12,9 @@ void Erosion::applyOn(HeightMap& heightMap, unsigned int nbDroplets)
 void Erosion::applyDroplet(HeightMap& heightMap)
 {
 	// Apply erosion
-	const float inertia = 0.5; // [0, 1]
 	const float threshold = 0;
 	const float minSlope = 0;
 	const float capacity = 1;
-	const float depositionRate = 0.5; // [0, 1]
-	const float evaporationRate = 0.1; // [0, 1]
 	const float gravity = 9.8;
 
 	// Spawn random Droplet
@@ -191,9 +188,6 @@ std::vector<float> Erosion::interpolatedGradient(HeightMap& heightMap, const Rai
 
 void Erosion::ErodeFrom(HeightMap& heightMap, const RainDrop& droplet, float amountToErode)
 {
-	const float radius = 0.5; // [0, 1]
-	const float erosionFactor = 0.5; // [0, 1]
-
 	float cumulativeErosionRate = 0;
 	std::vector<float> erosionWeights;
 
