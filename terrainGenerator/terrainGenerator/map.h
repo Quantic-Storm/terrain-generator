@@ -3,8 +3,10 @@
 
 class Map {
 private :
+	size_t sizeX;
+	size_t sizeY;
 	long int seed;
-	HeightMap height;
+	HeightMap terrain;
 	HeightMap temperature;
 
 public  :

@@ -21,7 +21,9 @@ public :
 	HeightMap(HeightMap&& hm) = default;
 	~HeightMap() = default;
 
-	HeightMap& operator+(const HeightMap& other);
+	HeightMap& operator=(const HeightMap& other) = default;
+	HeightMap operator+(const HeightMap& other);
+	HeightMap operator*(int coef);
 
 	float getHeightValue(unsigned int x, unsigned int y) const{ return terrain[x][y]; }
 	float getLength() const{ return terrain[0].size(); }
@@ -29,7 +31,7 @@ public :
 	void setHeightValue(unsigned int x, unsigned int y, float value) { terrain[x][y] = value; }
 	void addHeightValue(unsigned int x, unsigned int y, float value) { terrain[x][y] += value; }
 
-	void print() {
+	void print() {	//todo faire affichage custom entre min et max
 		float min = 10000, max = -10000;
 		int i = 0;
 		int nbel = 0;

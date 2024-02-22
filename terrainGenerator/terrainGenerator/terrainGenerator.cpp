@@ -17,9 +17,18 @@ int main()
 
 int main() {
     Perlin p(6874163524165342);
-    HeightMap* hm = p.generate(200, 200, 10);
-    hm->print();
-    delete(hm);
+    HeightMap* hm1 = p.generate(200, 200, 10);
+    HeightMap* hm2 = p.generate(200, 200, 10);
+
+    HeightMap hm3 = *hm1 + *hm2;
+    cout << "hm1" << endl;
+    hm1->print();
+    cout << "hm2" << endl;
+    hm2->print();
+    cout << "hm tot" << endl;
+    hm3.print();
+    delete(hm1);
+    delete(hm2);
 }
 
 

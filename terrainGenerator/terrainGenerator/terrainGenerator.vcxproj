@@ -140,6 +140,7 @@
   </ItemDefinitionGroup>
   <ItemGroup>
     <ClCompile Include="HeightMap.cpp" />
+    <ClCompile Include="Map.cpp" />
     <ClCompile Include="Perlin.cpp" />
     <ClCompile Include="terrainGenerator.cpp" />
     <ClCompile Include="Utils.cpp" />
