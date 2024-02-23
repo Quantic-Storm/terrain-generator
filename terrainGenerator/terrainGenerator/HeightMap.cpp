@@ -1,5 +1,6 @@
 #include "HeightMap.h"
 #include <stdexcept>
+#include <limits>
 
 
 
@@ -27,4 +28,37 @@ HeightMap HeightMap::operator*(int coef) {
 		}
 	}
 	return res;
+}
+
+void HeightMap::print() {	//todo faire affichage custom entre min et max
+	float min = std::numeric_limits<float>::max(),
+		max = std::numeric_limits<float>::min();
+	int i = 0;
+
+	for (vector<float>col : terrain) {
+		for (float el : col) {
+			if (el < min) min = el;
+			if (el > max) max = el;
+		}
+	}
+	float interval = max - min;
+	float quarter = interval / 4;
+
+	for (vector<float> col : terrain) {
+		cout << i << "\t";
+		i++;
+		for (float el : col) {
+			char symbol = ' ';
+
+			if (el < min + quarter) symbol = ' ';
+			else if (el < min + 2 * quarter) symbol = '.';
+			else if (el < min + 3 * quarter) symbol = '*';
+			else symbol = '#';
+			
+			cout << symbol;
+		}
+		cout << endl;
+	}
+	cout << "min = " << min << ", max = " << max << endl;
+
 }

@@ -1,9 +1,9 @@
 // terrainGenerator.cpp : Ce fichier contient la fonction 'main'. L'exécution du programme commence et se termine à cet endroit.
 //
 
-#include <iostream>
 #include "HeightMap.h"
 #include "Perlin.h"
+#include <iostream>
 
 /*
 int main()
@@ -21,10 +21,7 @@ int main() {
     HeightMap* hm2 = p.generate(200, 200, 10);
 
     HeightMap hm3 = *hm1 + *hm2;
-    cout << "hm1" << endl;
-    hm1->print();
-    cout << "hm2" << endl;
-    hm2->print();
+
     cout << "hm tot" << endl;
     hm3.print();
     delete(hm1);
