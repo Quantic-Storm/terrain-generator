@@ -18,7 +18,7 @@ public  :
 
 	Map& operator=(Map& map) = default;
 
-	void serialize(std::string name);		// determiner le format (idem pour le dernier constructeur)
+	void serialize(std::string name);
 	long int getSeed() { return seed; };
 
 
