@@ -16,7 +16,13 @@ namespace json
 	public:
 
 		Value() { content = nullptr; contentType = type::_NULL; }
+		Value(std::vector<Value>& arr) { content = new std::vector<Value>(arr); contentType = type::_ARRAY; }
+		Value(std::unordered_map<std::string, Value>& obj) { content = new std::unordered_map<std::string, Value> (obj); contentType = type::_OBJECT; }
+		Value(std::string str) { content = new std::string(str), contentType = type::_STRING; }
+		Value(bool b) { content = new bool(b), contentType = type::_BOOL; }
+		Value(double d) { content = new double(d), contentType = type::_NUMBER; }
 		Value(const Value& v);
+		
 		~Value() { delete content; };
 
 		void setNull() { delete content; content = nullptr; contentType = type::_NULL; }

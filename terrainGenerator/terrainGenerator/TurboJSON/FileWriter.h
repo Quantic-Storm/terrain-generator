@@ -11,11 +11,14 @@ namespace json
 	public :
 		FileWriter();
 		FileWriter(std::string filename);
-		~FileWriter();
+		~FileWriter() {}
 
 		std::string& getName() { return name; }
 		void setName(std::string newName) { name = newName; }
 		
 		json::Value& getValue() { return val; }
+
+		void writeFile();
+
 	};
 }

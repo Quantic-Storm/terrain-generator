@@ -8,7 +8,7 @@ private :
 	long int seed;
 	HeightMap terrain;
 	HeightMap temperature;
-	HeightMap humidity;
+	HeightMap moisture;
 
 public  :
 	Map();
