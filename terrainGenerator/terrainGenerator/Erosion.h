@@ -22,7 +22,7 @@ private:
 	const float depositionRate = 0.9; // [0, 1]
 	const float evaporationRate = 0.1; // [0, 1]
 	const float radius = 0.5; // [0, 1]
-	const float erosionFactor = 1; // [0, 1]
+	const float erosionFactor = 0.5; // [0, 1]
 
 public:
 	Erosion() : values(0) {};

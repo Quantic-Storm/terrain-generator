@@ -17,15 +17,22 @@ int main()
 //main de test perlin
 
 int main() {
-    Perlin p(6874163524165342);
-    HeightMap* hm = p.generate(200, 200, 20);
+
+    srand(time(nullptr));
+    Perlin p; // (6874163524165342);
+    HeightMap* hm = p.generate(100, 100, 20);
     hm->print();
 
     // Applying erosion
+    HeightMap delta = HeightMap(*hm);
+
     Erosion erosion;
-    erosion.applyOn(*hm, 200);
+    erosion.applyOn(*hm, 20000);
 
     hm->print();
+    delta.substract(*hm);
+
+    delta.print();
 
     delete(hm);
 }

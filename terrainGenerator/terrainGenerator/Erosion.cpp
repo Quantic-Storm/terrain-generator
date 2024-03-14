@@ -5,6 +5,7 @@ void Erosion::applyOn(HeightMap& heightMap, unsigned int nbDroplets)
 {
 	for (unsigned int i = 0; i < nbDroplets; i++)
 	{
+		//std::cout << "Droplet " << i << std::endl;
 		applyDroplet(heightMap);
 	}
 }
@@ -22,6 +23,13 @@ void Erosion::applyDroplet(HeightMap& heightMap)
 
 	for (unsigned int nbIter = 0; nbIter < 50; nbIter++)
 	{
+		
+
+		if (droplet.sediment != droplet.sediment)
+		{
+			std::cout << nbIter << " \n"; std::cout << "nan\n";
+			break;
+		}
 		// Checking if droplet is out of bound
 		if ((droplet.pos[0] < 0) || (droplet.pos[0] >= heightMap.getWidth()) || (droplet.pos[1] < 0) || (droplet.pos[1] >= heightMap.getLength()))
 		{
@@ -147,6 +155,7 @@ float Erosion::interpolatedHeight(HeightMap& heightMap, const RainDrop& droplet)
 	unsigned int x1 = (x+1 >= heightMap.getWidth() ? x : x + 1);
 	unsigned int y1 = (y+1 >= heightMap.getLength() ? y : y + 1);
 
+
 	// Get height of the pixels (x, y) (x+1, y) (x, y+1) (x+1, y+1)
 	float PXY = heightMap.getHeightValue(x, y);
 	float PX1Y = heightMap.getHeightValue(x1, y);
@@ -191,6 +200,20 @@ void Erosion::ErodeFrom(HeightMap& heightMap, const RainDrop& droplet, float amo
 	float cumulativeErosionRate = 0;
 	std::vector<float> erosionWeights;
 
+	amountToErode = (amountToErode > 0.0001 ? amountToErode : 0);
+
+	if (radius * 2 <= 1)
+	{
+		unsigned int x = unsigned int(droplet.pos[0]);
+		unsigned int y = unsigned int(droplet.pos[1]);
+
+		//std::cout << "ErodedAmount : " << erosionFactor * amountToErode << "\n";
+		//std::cout << "X : " << unsigned int(droplet.pos[0]) << "  Y : " << unsigned int(droplet.pos[1]) << "\n";
+
+		heightMap.setHeightValue(x, y, heightMap.getHeightValue(x, y) - erosionFactor * amountToErode);
+		return;
+	}
+
 	for (float i = droplet.pos[0]-radius; i < droplet.pos[0] + radius; i += 1.0)
 	{
 		for (float j = droplet.pos[1] - radius; j < droplet.pos[1] + radius; j += 1.0)
@@ -200,12 +223,15 @@ void Erosion::ErodeFrom(HeightMap& heightMap, const RainDrop& droplet, float amo
 
 			float dist2_x = (x - droplet.pos[0]) * (x - droplet.pos[0]);
 			float dist2_y = (y - droplet.pos[1]) * (y - droplet.pos[1]);
-			float depositRate = radius - sqrt(dist2_x+dist2_y);
+			float erosionRate = radius - sqrt(dist2_x+dist2_y);
+			erosionRate = (erosionRate > 0.0001 ? erosionRate : 0);
 
-			cumulativeErosionRate += depositRate;
-			erosionWeights.push_back(depositRate);
+			cumulativeErosionRate += erosionRate;
+			erosionWeights.push_back(erosionRate);
 		}
 	}
+
+	if (cumulativeErosionRate == 0) { return; }
 
 	unsigned int k = 0;
 	for (float i = droplet.pos[0] - radius; i < droplet.pos[0] + radius; i += 1.0)
@@ -216,6 +242,9 @@ void Erosion::ErodeFrom(HeightMap& heightMap, const RainDrop& droplet, float amo
 			unsigned int y = unsigned int(j);
 
 			// Remove an amount of sediment
+
+			std::cout << "ErodedAmount : " << erosionFactor * amountToErode * erosionWeights[k] / cumulativeErosionRate << "\n";
+			std::cout << "X : " << unsigned int(droplet.pos[0]) << "  Y : " << unsigned int(droplet.pos[1]) << "\n";
 			heightMap.setHeightValue(x, y, heightMap.getHeightValue(x, y) - erosionFactor * amountToErode * erosionWeights[k] / cumulativeErosionRate);
 			k++;
 		}

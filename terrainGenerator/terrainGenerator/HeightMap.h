@@ -72,4 +72,17 @@ public:
 
 	}
 
+	HeightMap& substract(HeightMap& heightMap)
+	{
+		for (unsigned int i = 0; i < getWidth(); i++)
+		{
+			for (unsigned int j = 0; j < getLength(); j++)
+			{
+				this->setHeightValue(i, j, getHeightValue(i, j) - heightMap.getHeightValue(i, j));
+			}
+		}
+
+		return *this;
+	}
+
 };
