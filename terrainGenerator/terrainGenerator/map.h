@@ -14,12 +14,8 @@ public  :
 	Map();
 	Map(Map& map) = default;
 	Map(long int customSeed, size_t sX, size_t sY);
-	Map(std::string filename);	
 
 	Map& operator=(Map& map) = default;
 
-	void serialize(std::string name);
 	long int getSeed() { return seed; };
-
-
 };

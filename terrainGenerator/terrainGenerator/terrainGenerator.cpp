@@ -3,6 +3,7 @@
 
 #include "HeightMap.h"
 #include "Perlin.h"
+#include "map.h"
 #include <iostream>
 
 
@@ -17,16 +18,10 @@ int main()
 //main de test perlin
 
 int main() {
-    Perlin p(6874163524165342);
-    HeightMap* hm1 = p.generate(200, 200, 10);
-    HeightMap* hm2 = p.generate(200, 200, 10);
-
-    HeightMap hm3 = *hm1 + *hm2;
-
-    cout << "hm tot" << endl;
-    hm3.print();
-    delete(hm1);
-    delete(hm2);
+    Perlin p(42);
+    HeightMap* map = p.generate(400, 400, 20);
+    map->print();
+    
 }
 
 

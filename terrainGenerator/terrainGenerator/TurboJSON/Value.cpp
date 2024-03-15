@@ -30,9 +30,10 @@ std::string Value::to_string() {
 	case type::_OBJECT:
 		res = "{";
 		for (std::pair<std::string, Value> p : *(std::unordered_map<std::string,Value>*)content) {
-			res += "\"" + p.first + "\"" + ":" + p.second.to_string() + "\n";
+			res += "\"" + p.first + "\"" + ":" + p.second.to_string() + ",\n";
 		}
-		res += "}";
+		res.pop_back(); res.pop_back();
+		res += "\n}";
 		break;
 	}
 	return res;

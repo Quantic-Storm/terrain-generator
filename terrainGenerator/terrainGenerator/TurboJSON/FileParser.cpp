@@ -1,5 +1,5 @@
 #include "FileParser.h"
-
+#include <iostream>
 
 using namespace json;
 
@@ -29,7 +29,7 @@ void FileParser::parse() {
 		}
 	}
 	catch (std::exception* ex) {
-		ex->what();
+		std::cout << ex->what() << std::endl;
 		delete ex;
 	}
 	
@@ -91,7 +91,7 @@ std::unordered_map<std::string, Value> FileParser::parseObject() {
 					state++;
 					val.setObject(parseObject());
 				}
-				else throw new std::exception("parsing error, unknown token %c", ch);
+				else throw new std::exception("parsing error, unknown token "+ ch);
 				break;
 
 			case 3 :
@@ -103,7 +103,7 @@ std::unordered_map<std::string, Value> FileParser::parseObject() {
 					obj[name] = val;
 					return obj;
 				}
-				else throw new std::exception("parsing error, expecting token , or }");
+				else throw new std::exception("parsing error, expecting token , or }, got " + ch);
 				break;
 
 			default: state = 0;
