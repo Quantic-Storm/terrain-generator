@@ -5,8 +5,11 @@
 #include "Perlin.h"
 #include "map.h"
 #include <iostream>
+extern "C" { 
+    #include "qdbmp/qdbmp.h"
+}
 
-
+using namespace std;
 /*
 int main()
 {
@@ -18,9 +21,8 @@ int main()
 //main de test perlin
 
 int main() {
-    Perlin p(42);
-    HeightMap* map = p.generate(400, 400, 20);
-    map->print();
+    Map map(216, 1920, 1080);
+    map.build_image();
     
 }
 

@@ -17,5 +17,6 @@ public  :
 
 	Map& operator=(Map& map) = default;
 
+	int build_image();
 	long int getSeed() { return seed; };
 };

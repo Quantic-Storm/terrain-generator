@@ -30,6 +30,29 @@ HeightMap HeightMap::operator*(int coef) {
 	return res;
 }
 
+float HeightMap::getMaxValue() {
+	float max = std::numeric_limits<float>::min();
+
+	for (vector<float>col : terrain) {
+		for (float el : col) {
+			if (el > max) max = el;
+		}
+	}
+	return max;
+}
+
+float HeightMap::getMinValue() {
+	float min = std::numeric_limits<float>::max();
+
+	for (vector<float>col : terrain) {
+		for (float el : col) {
+			if (el < min) min = el;
+		}
+	}
+	return min;
+}
+
+
 void HeightMap::print() {	//todo faire affichage custom entre min et max
 	float min = std::numeric_limits<float>::max(),
 		max = std::numeric_limits<float>::min();

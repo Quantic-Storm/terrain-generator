@@ -38,17 +38,17 @@ HeightMap* Perlin::generate(unsigned int xSize, unsigned int ySize, int chunkSiz
 			vector<float> v1(2), v2(2), v3(2), v4(2);
 			vector<float> v1Pos(2), v2Pos(2), v3Pos(2), v4Pos(2);
 
-			v1[0] = getVecX(floor((float)x / chunkSize), floor((float)y / chunkSize)) / 128.;
-			v1[1] = getVecY(floor((float)x / chunkSize), floor((float)y / chunkSize)) / 128.;
+			v1[0] = getVecX(x / chunkSize, y / chunkSize) / 128.;
+			v1[1] = getVecY(x / chunkSize, y / chunkSize) / 128.;
 
-			v2[0] = getVecX(floor((float)x / chunkSize) + 1, floor((float)y / chunkSize)) / 128.;
-			v2[1] = getVecY(floor((float)x / chunkSize) + 1, floor((float)y / chunkSize)) / 128.;
+			v2[0] = getVecX(x / chunkSize + 1, y / chunkSize) / 128.;
+			v2[1] = getVecY(x / chunkSize + 1, y / chunkSize) / 128.;
 
-			v3[0] = getVecX(floor((float)x / chunkSize), floor((float)y / chunkSize) + 1) / 128.;
-			v3[1] = getVecY(floor((float)x / chunkSize), floor((float)y / chunkSize) + 1) / 128.;
+			v3[0] = getVecX(x / chunkSize, y / chunkSize + 1) / 128.;
+			v3[1] = getVecY(x / chunkSize, y / chunkSize + 1) / 128.;
 
-			v4[0] = getVecX(floor((float)x / chunkSize) + 1, floor((float)y / chunkSize) + 1) / 128.;
-			v4[1] = getVecY(floor((float)x / chunkSize) + 1, floor((float)y / chunkSize) + 1) / 128.;
+			v4[0] = getVecX(x / chunkSize + 1, y / chunkSize + 1) / 128.;
+			v4[1] = getVecY(x / chunkSize + 1, y / chunkSize + 1) / 128.;
 
 
 			v1Pos[0] = (x % chunkSize);

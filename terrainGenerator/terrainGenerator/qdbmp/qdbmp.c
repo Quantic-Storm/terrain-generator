@@ -336,6 +336,7 @@ void BMP_WriteFile( BMP* bmp, const char* filename )
 	/* Write header */
 	if ( WriteHeader( bmp, f ) != BMP_OK )
 	{
+		fprintf(stdout, "error 1\n");
 		BMP_LAST_ERROR_CODE = BMP_IO_ERROR;
 		fclose( f );
 		return;
@@ -347,6 +348,7 @@ void BMP_WriteFile( BMP* bmp, const char* filename )
 	{
 		if ( fwrite( bmp->Palette, sizeof( UCHAR ), BMP_PALETTE_SIZE, f ) != BMP_PALETTE_SIZE )
 		{
+			fprintf(stdout, "error 2\n");
 			BMP_LAST_ERROR_CODE = BMP_IO_ERROR;
 			fclose( f );
 			return;
@@ -357,6 +359,7 @@ void BMP_WriteFile( BMP* bmp, const char* filename )
 	/* Write data */
 	if ( fwrite( bmp->Data, sizeof( UCHAR ), bmp->Header.ImageDataSize, f ) != bmp->Header.ImageDataSize )
 	{
+		fprintf(stdout, "error 3\n");
 		BMP_LAST_ERROR_CODE = BMP_IO_ERROR;
 		fclose( f );
 		return;
@@ -476,6 +479,7 @@ void BMP_SetPixelRGB( BMP* bmp, UINT x, UINT y, UCHAR r, UCHAR g, UCHAR b )
 
 	else if ( bmp->Header.BitsPerPixel != 24 && bmp->Header.BitsPerPixel != 32 )
 	{
+		fprintf(stdout, "%d\n", bmp->Header.BitsPerPixel);
 		BMP_LAST_ERROR_CODE = BMP_TYPE_MISMATCH;
 	}
 
