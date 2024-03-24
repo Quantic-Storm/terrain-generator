@@ -141,11 +141,13 @@
   <ItemGroup>
     <ClCompile Include="Erosion.cpp" />
     <ClCompile Include="Perlin.cpp" />
+    <ClCompile Include="qdbmp.cpp" />
     <ClCompile Include="terrainGenerator.cpp" />
     <ClCompile Include="Utils.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Erosion.h" />
+    <ClInclude Include="qdbmp.h" />
     <ClInclude Include="HeightMap.h" />
     <ClInclude Include="Perlin.h" />
     <ClInclude Include="Utils.h" />

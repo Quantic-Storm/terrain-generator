@@ -7,7 +7,7 @@ using namespace std;
 class Perlin {
 private:
 	long seed;
-	vector<unsigned char> randoms;
+	vector<char> randoms;
 
 
 	//allow to shuffle the values of randoms

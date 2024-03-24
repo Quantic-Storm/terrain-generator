@@ -2,6 +2,7 @@
 
 #include "HeightMap.h"
 #include <math.h>
+#include <random>
 
 #define PI 3.14159265358979323846
 
@@ -17,15 +18,22 @@ struct RainDrop
 class Erosion
 {
 private:
-	float values; // necessarry constants for erosion (None for now)
-	const float inertia = 0.5; // [0, 1]
-	const float depositionRate = 0.9; // [0, 1]
-	const float evaporationRate = 0.1; // [0, 1]
-	const float radius = 0.5; // [0, 1]
-	const float erosionFactor = 0.5; // [0, 1]
+	//float values; // necessarry constants for erosion (None for now)
+	float inertia = 0.5; // [0, 1]
+	float depositionRate = 0.02; // [0, 1]
+	float evaporationRate = 0.01; // [0, 1]
+	float radius = 0.25; // [0, 1]
+	float erosionFactor = 0.08; // [0, 1]
+
+	bool sourceErosion = false;
+	std::vector<std::vector<unsigned int>> sources; // list of possible spawn point (x, y) for droplets (when source erosion enabled)
+	unsigned int sourcePointNumber = 0; // index of the current source point used
 
 public:
-	Erosion() : values(0) {};
+	Erosion();
+
+	Erosion(float inertia, float depositionRate, float evaporationRate, float radius, float erosionFactor, bool sourceErosion) :
+		inertia(inertia), depositionRate(depositionRate), evaporationRate(evaporationRate), radius(radius), erosionFactor(erosionFactor), sourceErosion(sourceErosion) {};
 
 	/**
 	 * Method that applies erosion on a given heightMap
@@ -45,11 +53,18 @@ public:
 private:
 
 	/**
-	 * Method that generate a rain drop on a given heightMap
-	 * @param heighMap The map where the droplet will be generated.
+	 * Method that generate a rain drop on a given heightMap at a random position
+	 * @param heightMap The map where the droplet will be generated.
 	 * @return A RainDrop structure representing the generated Droplet
 	 */
 	RainDrop createDroplet(HeightMap& heightMap);
+
+	/**
+	* Method that generate a rain drop on the given heightMap at a random summit (>80% maxHeight)
+	* @param heightMap The map where the droplet will be generated
+	* @return A RainDrop structure representing the generated droplet
+	*/
+	RainDrop createSourceDroplet(HeightMap& heightMap);
 
 	/**
 	 * Method that return the height of a rain drop on a given heightMap

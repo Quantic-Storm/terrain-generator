@@ -5,9 +5,12 @@ void Erosion::applyOn(HeightMap& heightMap, unsigned int nbDroplets)
 {
 	for (unsigned int i = 0; i < nbDroplets; i++)
 	{
-		//std::cout << "Droplet " << i << std::endl;
+		if ((i+1) % 10000 == 0) {
+			std::cout << "Droplet " << i+1 << "/" << nbDroplets << "\r";
+		}
 		applyDroplet(heightMap);
 	}
+	std::cout << std::endl;
 }
 
 void Erosion::applyDroplet(HeightMap& heightMap)
@@ -18,9 +21,18 @@ void Erosion::applyDroplet(HeightMap& heightMap)
 	const float capacity = 1;
 	const float gravity = 9.8;
 
-	// Spawn random Droplet
-	RainDrop droplet = createDroplet(heightMap);
 
+	// Spawn random Droplet Or at random summit
+	RainDrop droplet;
+	if (sourceErosion)
+	{
+		droplet = createSourceDroplet(heightMap);
+	}
+	else {
+		droplet = createDroplet(heightMap);
+	}
+
+	bool outOfBounds = false;
 	for (unsigned int nbIter = 0; nbIter < 50; nbIter++)
 	{
 		
@@ -28,11 +40,13 @@ void Erosion::applyDroplet(HeightMap& heightMap)
 		if (droplet.sediment != droplet.sediment)
 		{
 			std::cout << nbIter << " \n"; std::cout << "nan\n";
+			outOfBounds = true;
 			break;
 		}
 		// Checking if droplet is out of bound
 		if ((droplet.pos[0] < 0) || (droplet.pos[0] >= heightMap.getWidth()) || (droplet.pos[1] < 0) || (droplet.pos[1] >= heightMap.getLength()))
 		{
+			outOfBounds = true;
 			break;
 		}
 
@@ -68,6 +82,7 @@ void Erosion::applyDroplet(HeightMap& heightMap)
 		// Checking if droplet is out of bound (Is there a way without breaking the loop ?)
 		if ((droplet.pos[0] < 0) || (droplet.pos[0] >= heightMap.getWidth()) || (droplet.pos[1] < 0) || (droplet.pos[1] >= heightMap.getLength()))
 		{
+			outOfBounds = true;
 			break;
 		}
 
@@ -116,6 +131,14 @@ void Erosion::applyDroplet(HeightMap& heightMap)
 
 
 	}
+
+	// If droplet still is on the map with sediment at the end of its life
+	if (droplet.sediment > 0 && outOfBounds == false)
+	{
+		// Deposit droplet's remaining sediment
+		DepositOn(heightMap, droplet, droplet.sediment);
+		droplet.sediment = 0;
+	}
 }
 
 RainDrop Erosion::createDroplet(HeightMap& heightMap) // Mettre heightMap en const
@@ -124,8 +147,64 @@ RainDrop Erosion::createDroplet(HeightMap& heightMap) // Mettre heightMap en con
 	unsigned int length = heightMap.getLength();
 	unsigned int width = heightMap.getWidth();
 
-	float x = width * std::rand() / float(RAND_MAX);
-	float y = length * std::rand() / float(RAND_MAX);
+	float x, y;
+
+
+	x = (width - 1) * std::rand() / float(RAND_MAX);
+	y = (length - 1) * std::rand() / float(RAND_MAX);
+
+
+	float angle = std::rand() / float(RAND_MAX);
+	float dir_x = cos(angle * 2.0 * PI);
+	float dir_y = sin(angle * 2.0 * PI);
+
+	RainDrop droplet;
+	droplet.pos.push_back(x);
+	droplet.pos.push_back(y);
+	droplet.dir.push_back(dir_x);
+	droplet.dir.push_back(dir_y);
+
+	droplet.water = 1;
+	droplet.sediment = 0;
+	droplet.speed = 0;
+
+	return droplet;
+}
+
+RainDrop Erosion::createSourceDroplet(HeightMap& heightMap)
+{
+	// If no summit was computed, check for them
+	if (sources.size() == 0)
+	{
+		std::cout << "Computing source points...\n";
+		float maxHeight = heightMap.getMaxHeight();
+
+		for (unsigned int x = 0; x < heightMap.getWidth(); x++)
+		{
+			for (unsigned int y = 0; y < heightMap.getLength(); y++)
+			{
+				if(0.5 * maxHeight < heightMap.getHeightValue(x, y) && heightMap.getHeightValue(x, y) < 0.95 * maxHeight)
+				{ 
+					std::vector<unsigned int> sourcePoint;
+					sourcePoint.push_back(x);
+					sourcePoint.push_back(y);
+
+					sources.push_back(sourcePoint);
+				}
+			}
+		}
+		std::shuffle(sources.begin(), sources.end(), std::default_random_engine());
+
+		std::cout << "nb of source points detected : " << sources.size() << std::endl;
+	}
+
+	// If no summit where found, spawn at random position
+	if (sources.size() == 0) { return createDroplet(heightMap); }
+
+	// Randomly choosing a source point to spawn the droplet to
+	float x = sources[sourcePointNumber][0];
+	float y = sources[sourcePointNumber][1];
+	sourcePointNumber = (sourcePointNumber + 1) % sources.size(); // Next index (loop back if at the end of the list)
 
 	float angle = std::rand() / float(RAND_MAX);
 	float dir_x = cos(angle * 2.0 * PI);
@@ -218,6 +297,10 @@ void Erosion::ErodeFrom(HeightMap& heightMap, const RainDrop& droplet, float amo
 	{
 		for (float j = droplet.pos[1] - radius; j < droplet.pos[1] + radius; j += 1.0)
 		{
+
+			if (i < 0 || i > heightMap.getWidth()) { continue; }
+			if (j < 0 || j > heightMap.getLength()) { continue; } 
+
 			unsigned int x = unsigned int(i);
 			unsigned int y = unsigned int(j);
 
@@ -238,13 +321,16 @@ void Erosion::ErodeFrom(HeightMap& heightMap, const RainDrop& droplet, float amo
 	{
 		for (float j = droplet.pos[1] - radius; j < droplet.pos[1] + radius; j += 1.0)
 		{
+			if (i < 0 || i > heightMap.getWidth()) { continue; }
+			if (j < 0 || j > heightMap.getLength()) { continue; }
+
 			unsigned int x = unsigned int(i);
 			unsigned int y = unsigned int(j);
 
 			// Remove an amount of sediment
 
-			std::cout << "ErodedAmount : " << erosionFactor * amountToErode * erosionWeights[k] / cumulativeErosionRate << "\n";
-			std::cout << "X : " << unsigned int(droplet.pos[0]) << "  Y : " << unsigned int(droplet.pos[1]) << "\n";
+			//std::cout << "ErodedAmount : " << erosionFactor * amountToErode * erosionWeights[k] / cumulativeErosionRate << "\n";
+			//std::cout << "X : " << unsigned int(droplet.pos[0]) << "  Y : " << unsigned int(droplet.pos[1]) << "\n";
 			heightMap.setHeightValue(x, y, heightMap.getHeightValue(x, y) - erosionFactor * amountToErode * erosionWeights[k] / cumulativeErosionRate);
 			k++;
 		}

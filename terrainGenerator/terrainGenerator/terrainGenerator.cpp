@@ -18,21 +18,37 @@ int main()
 
 int main() {
 
+    cout << "Program launched\n";
     srand(time(nullptr));
-    Perlin p; // (6874163524165342);
-    HeightMap* hm = p.generate(100, 100, 20);
-    hm->print();
+    Perlin p; //(6874163524165342);
+    HeightMap* hm = p.generate(500, 500, 80);
+    //hm->print();
+    cout << "Map generated !\n";
+    hm->saveAsBitMap("C:/Users/benhi/Desktop/original0.bmp");
 
-    // Applying erosion
     HeightMap delta = HeightMap(*hm);
+    //return 0;
 
-    Erosion erosion;
-    erosion.applyOn(*hm, 20000);
 
-    hm->print();
-    delta.substract(*hm);
+    cout << "Applying harsh erosion\n";
+    // Applying erosion
+    Erosion erosionH(0.5, 0.6, 0.05, 0.4, 0.8, false);
+    erosionH.applyOn(*hm, 100000);
+    cout << "Erosion done !\n";
+    hm->saveAsBitMap("C:/Users/benhi/Desktop/original1.bmp");
 
-    delta.print();
+
+    cout << "Applying smooth erosion\n";
+    // Applying erosion
+    Erosion erosionS(0.5, 0.1, 0.01, 0.25, 0.01, true);
+    erosionS.applyOn(*hm, 50000);
+    cout << "Erosion done !\n";
+    hm->saveAsBitMap("C:/Users/benhi/Desktop/original2.bmp");
+
+    //hm->print();
+    //delta.substract(*hm);
+
+    //delta.print();
 
     delete(hm);
 }
