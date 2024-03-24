@@ -3,6 +3,7 @@
 extern "C" {
 	#include "qdbmp/qdbmp.h"
 }
+#include <future>
 
 
 
@@ -13,19 +14,30 @@ Map::Map(long int customSeed, size_t sX, size_t sY) {
 	sizeY = sY;
 	seed = customSeed;
 	srand(seed);
-	Perlin p(rand());
-	temperature = *p.generate(sizeX, sizeY, 500);
-	p.changeSeed(rand());
-	moisture = *p.generate(sizeX, sizeY, 500);
-	p.changeSeed(rand());
-	HeightMap altitude = *p.generate(sizeX, sizeY, 610);
-	p.changeSeed(rand());
-	HeightMap harm1 = *p.generate(sizeX, sizeY, 200);
-	p.changeSeed(rand());
-	HeightMap harm2 = *p.generate(sizeX, sizeY, 75);
-	p.changeSeed(rand());
-	HeightMap harm3 = *p.generate(sizeX, sizeY, 40);
-	terrain = altitude * 30 + harm1 * 15 + harm2 * 6 + harm3 * 3;				// ne pas hesiter à changer les valeurs pour équilibrer
+	Perlin p1(rand());
+
+
+	std::future<HeightMap*> f1 = std::async(std::launch::async, &Perlin::generate, &p1, sizeX, sizeY, 500);
+	Perlin p2(rand());
+	std::future<HeightMap*> f2 = std::async(std::launch::async, &Perlin::generate, &p2, sizeX, sizeY, 500);
+	Perlin p3(rand());
+	std::future<HeightMap*> f3 = std::async(std::launch::async, &Perlin::generate, &p3, sizeX, sizeY, 610);
+	Perlin p4(rand());
+	std::future<HeightMap*> f4 = std::async(std::launch::async, &Perlin::generate, &p4, sizeX, sizeY, 200);
+	Perlin p5(rand());
+	std::future<HeightMap*> f5 = std::async(std::launch::async, &Perlin::generate, &p5, sizeX, sizeY, 75);
+	Perlin p6(rand());
+	std::future<HeightMap*> f6 = std::async(std::launch::async, &Perlin::generate, &p6, sizeX, sizeY, 40);
+
+
+	temperature = *f1.get();
+	moisture = *f2.get();
+	HeightMap harm1 = *f3.get();
+	HeightMap harm2 = *f4.get();
+	HeightMap harm3 = *f5.get();
+	HeightMap harm4 = *f6.get();
+
+	terrain = harm1 * 30 + harm2 * 15 + harm3 * 6 + harm4 * 3;		// ne pas hesiter à changer les valeurs pour équilibrer
 }
 
 

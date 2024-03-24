@@ -3,6 +3,7 @@
 #include <exception>
 #include <cmath>
 #include <stdexcept>
+#include <chrono>
 
 
 Perlin::Perlin() {
@@ -29,6 +30,9 @@ void Perlin::changeSeed(long newSeed) {
 }
 
 HeightMap* Perlin::generate(unsigned int xSize, unsigned int ySize, int chunkSize) {
+
+	auto start = std::chrono::high_resolution_clock::now();
+
 
 	int x, y;
 	HeightMap* res = new HeightMap(xSize, ySize);
@@ -79,5 +83,8 @@ HeightMap* Perlin::generate(unsigned int xSize, unsigned int ySize, int chunkSiz
 			res->setHeightValue(x, y, Utils::interpolate(h1, h2, w2));
 		}
 	}
+	auto stop = std::chrono::high_resolution_clock::now();
+	auto procTime = std::chrono::duration_cast<std::chrono::milliseconds>(stop - start);
+	std::cout << procTime.count() << std::endl;
 	return res;
 }
