@@ -22,7 +22,7 @@ Perlin::Perlin(long customSeed) {
 
 void Perlin::changeSeed() {
 
-	// Melange les valeurs aléatoires
+	// Melange les valeurs alï¿½atoires
 	std::shuffle(randoms.begin(), randoms.end(), std::default_random_engine());
 
 }
