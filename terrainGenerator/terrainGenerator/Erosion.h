@@ -29,6 +29,8 @@ private:
 	std::vector<std::vector<unsigned int>> sources; // list of possible spawn point (x, y) for droplets (when source erosion enabled)
 	unsigned int sourcePointNumber = 0; // index of the current source point used
 
+	Verbose verbose;
+
 public:
 	Erosion();
 

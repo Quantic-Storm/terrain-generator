@@ -8,15 +8,29 @@
 int main()
 {
     HeightMap hm = HeightMap(25, 24);
-    std::cout << hm.getWidth() << ", " << hm.getLength() << std::endl;
+    verbose << hm.getWidth() << ", " << hm.getLength() << std::endl;
 }*/
 
+std::vector<unsigned int> initVector()
+{
+    std::vector<unsigned int> v;
+    v.push_back(0);
+    return v;
+}
 
-//main de test perlin
+unsigned int Verbose::level;
+unsigned int Verbose::maxRequiredLevel;
+vector<unsigned int> Verbose::requiredLevels = initVector();
 
 int main() {
 
-    std::cout << "Program Launched\n";
+    Verbose verbose;
+    verbose.setLevel(0);
+
+    verbose.setRequiredLevel(1);
+    verbose << "Program Launched\n";
+    verbose.endRequiredLevel();
+
     Map map(216, 1960, 1080);
 }
 

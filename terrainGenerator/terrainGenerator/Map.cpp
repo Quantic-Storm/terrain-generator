@@ -1,6 +1,7 @@
 #include "map.h"
 #include "Perlin.h"
 #include "qdbmp.h"
+#include <future>
 
 
 
@@ -14,44 +15,28 @@ Map::Map(long int customSeed, size_t sX, size_t sY) {
 	HeightMap* hm;
 
 	Perlin p(rand());
-	
-	std::cout << "Temperature...\n";
-	hm = p.generate(sizeX, sizeY, 500);
-	temperature = HeightMap(*hm);
-	delete hm;
 
-	std::cout << "Moisture...\n";
-	p.changeSeed();
-	hm = p.generate(sizeX, sizeY, 500);
-	moisture = HeightMap(*hm);
-	delete hm;
+	seed = customSeed;
+	srand(seed);
+	Perlin p1(rand());
 
-	std::cout << "Altitude...\n";
-	p.changeSeed();
-	hm = p.generate(sizeX, sizeY, 610);
-	HeightMap altitude(*hm);
-	delete hm;
+	std::vector<future<HeightMap*>> perlins(6);
+	std::vector<unsigned int> chunkSizes = { 500, 500, 610, 200, 70, 40 };
 
-	std::cout << "Montains...\n";
-	p.changeSeed();
-	hm = p.generate(sizeX, sizeY, 200);
-	HeightMap harm1(*hm);
-	delete hm;
+	for (unsigned int i = 0; i < 6; i++) {
+		Perlin p(rand());
+		perlins[i] = std::async(std::launch::async, &Perlin::generate, &p, sizeX, sizeY, chunkSizes[i]);
+	}
 
 
-	std::cout << "Hills...\n";
-	p.changeSeed();
-	hm = p.generate(sizeX, sizeY, 75);
-	HeightMap harm2(*hm);
-	delete hm;
+	temperature = *perlins[0].get();
+	moisture = *perlins[1].get();
+	HeightMap harm1 = *perlins[2].get();
+	HeightMap harm2 = *perlins[3].get();
+	HeightMap harm3 = *perlins[4].get();
+	HeightMap harm4 = *perlins[5].get();
 
-	std::cout << "small hills...\n";
-	p.changeSeed();
-	hm = p.generate(sizeX, sizeY, 40);
-	HeightMap harm3(*hm);
-	delete hm;
-
-	terrain = altitude * 30 + harm1 * 15 + harm2 * 6 + harm3 * 3;				// ne pas hesiter à changer les valeurs pour équilibrer
+	terrain = harm1 * 30 + harm2 * 15 + harm3 * 6 + harm4 * 3;        // ne pas hesiter à changer les valeurs pour équilibrer
 
 	build_image("C:/Users/benhi/Desktop/map1.bmp");
 
@@ -65,6 +50,8 @@ Map::Map(long int customSeed, size_t sX, size_t sY) {
 	Erosion erosionS(0.5, 0.1, 0.01, 0.25, 0.001, true);
 	erosionS.applyOn(terrain, 0.03*sizeX*sizeY);
 	cout << "Erosion done !\n";
+
+	verbose.endRequiredLevel();
 
 	build_image("C:/Users/benhi/Desktop/map2.bmp");
 

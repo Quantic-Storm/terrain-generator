@@ -1,6 +1,7 @@
 #pragma once
 #include "HeightMap.h"
 #include "Erosion.h"
+#include "Verbose.h"
 
 class Map {
 private:
@@ -10,6 +11,8 @@ private:
 	HeightMap terrain;
 	HeightMap temperature;
 	HeightMap moisture;
+
+	Verbose verbose;
 
 public:
 	Map();

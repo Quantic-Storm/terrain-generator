@@ -71,7 +71,7 @@ HeightMap* Perlin::generate(unsigned int xSize, unsigned int ySize, int chunkSiz
 	//std::chrono::steady_clock::time_point timeEnd = std::chrono::high_resolution_clock::now();
 	//long duration = std::chrono::duration_cast<std::chrono::seconds>(timeEnd - timeStart).count();
 
-	//std::cout << "Generated chunk data in " << duration << " second(s)\n";
+	//verbose << "Generated chunk data in " << duration << " second(s)\n";
 
 	//// A rendre multi thread eventuellement
 	//vector<float> v1Pos(2), v2Pos(2), v3Pos(2), v4Pos(2);
@@ -124,7 +124,7 @@ HeightMap* Perlin::generate(unsigned int xSize, unsigned int ySize, int chunkSiz
 	//timeEnd = std::chrono::high_resolution_clock::now();
 	//duration = std::chrono::duration_cast<std::chrono::seconds>(timeEnd - timeStart).count();
 
-	//std::cout << "Total time " << duration << " second(s)\n";
+	//verbose << "Total time " << duration << " second(s)\n";
 	//return res;
 
 	vector<float> v1Pos(2), v2Pos(2), v3Pos(2), v4Pos(2);
@@ -189,7 +189,7 @@ HeightMap* Perlin::generate(unsigned int xSize, unsigned int ySize, int chunkSiz
 	timeEnd = std::chrono::high_resolution_clock::now();
 	duration = std::chrono::duration_cast<std::chrono::seconds>(timeEnd - timeStart).count();
 
-	std::cout << duration << std::endl;
+	verbose << duration << "\n";
 
 	return res;
 }

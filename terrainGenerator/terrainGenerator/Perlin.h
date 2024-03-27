@@ -10,6 +10,8 @@ private:
 	long seed;
 	vector<char> randoms;
 
+	Verbose verbose;
+
 
 	//allow to shuffle the values of randoms
 	unsigned char getVecX(int xVec, int yVec) {
