@@ -140,6 +140,8 @@
   </ItemDefinitionGroup>
   <ItemGroup>
     <ClCompile Include="Erosion.cpp" />
+    <ClCompile Include="HeightMap.cpp" />
+    <ClCompile Include="Map.cpp" />
     <ClCompile Include="Perlin.cpp" />
     <ClCompile Include="qdbmp.cpp" />
     <ClCompile Include="terrainGenerator.cpp" />
@@ -147,6 +149,7 @@
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Erosion.h" />
+    <ClInclude Include="Map.h" />
     <ClInclude Include="qdbmp.h" />
     <ClInclude Include="HeightMap.h" />
     <ClInclude Include="Perlin.h" />

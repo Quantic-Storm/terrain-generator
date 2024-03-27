@@ -1,6 +1,7 @@
 #pragma once
 #include <vector>
 #include "HeightMap.h"
+#include <chrono>
 
 using namespace std;
 
@@ -24,8 +25,19 @@ public:
 	Perlin(Perlin& p) = default;
 	~Perlin() = default;
 
-	HeightMap* generate(unsigned int xSize, unsigned int ySize, int chunkSize);		// free le pointeur !
-	void changeSeed(long newSeed);
+	void setSeed(long newSeed) {
+		seed = newSeed;
+		srand(seed);
+
+		for (unsigned int i = 0; i < 256; i++)
+		{
+			randoms.push_back((rand() % 256));
+		}
+	}
+
+	// free le pointeur !
+	HeightMap* generate(unsigned int xSize, unsigned int ySize, int chunkSize);		
+	void changeSeed();
 	long getSeed() { return seed; }
 
 

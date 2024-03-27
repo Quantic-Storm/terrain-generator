@@ -177,7 +177,7 @@ RainDrop Erosion::createSourceDroplet(HeightMap& heightMap)
 	if (sources.size() == 0)
 	{
 		std::cout << "Computing source points...\n";
-		float maxHeight = heightMap.getMaxHeight();
+		float maxHeight = heightMap.getMaxValue();
 
 		for (unsigned int x = 0; x < heightMap.getWidth(); x++)
 		{
