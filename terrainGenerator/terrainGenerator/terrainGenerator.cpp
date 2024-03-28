@@ -31,7 +31,7 @@ int main() {
     verbose << "Program Launched\n";
     verbose.endRequiredLevel();
 
-    Map map(216, 1960, 1080);
+    Map map(216, 200, 200);
 }
 
 

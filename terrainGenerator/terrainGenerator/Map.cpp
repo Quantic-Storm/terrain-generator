@@ -21,7 +21,7 @@ Map::Map(long int customSeed, size_t sX, size_t sY) {
 	Perlin p1(rand());
 
 	std::vector<future<HeightMap*>> perlins(6);
-	std::vector<unsigned int> chunkSizes = { 500, 500, 610, 200, 70, 40 };
+	std::vector<unsigned int> chunkSizes = { 50, 50, 61, 20, 7, 4 };
 
 	for (unsigned int i = 0; i < 6; i++) {
 		Perlin p(rand());
@@ -58,23 +58,147 @@ Map::Map(long int customSeed, size_t sX, size_t sY) {
 }
 
 
+std::vector<unsigned int> Map::getColor(unsigned int x, unsigned int y)
+{
+
+	float min_height = terrain.getMinValue();
+	float max_height = terrain.getMaxValue();
+
+	float min_temperature = temperature.getMinValue();
+	float max_temperature = temperature.getMaxValue();
+
+	float min_moisture = moisture.getMinValue();
+	float max_moisture = moisture.getMaxValue();
+
+	float heightRatio = (terrain.getHeightValue(x, y) - min_height) / (max_height - min_height);
+	float tempRatio = (temperature.getHeightValue(x, y) - min_temperature) / (max_temperature - min_temperature);
+	float moistRatio = (moisture.getHeightValue(x, y) - min_moisture) / (max_moisture - min_moisture);
+
+
+	if (heightRatio < 1.0 / 7)
+	{
+		if (tempRatio < 3.0 / 6) { return coldOcean; }
+
+		return freshOcean;
+	}
+
+	if (heightRatio < 2.0 / 7)
+	{
+		if (tempRatio < 2.0 / 6) { return coldWater; }
+
+		return freshWater;
+	}
+
+
+	if (moistRatio < 0.5)
+	{
+
+		if (heightRatio < 3.0 / 7)
+		{
+			if (tempRatio < 1.0 / 6) { return icePlain; }
+
+			if (tempRatio < 3.0 / 6) { return coldWater; }
+
+			return freshWater;
+		}
+
+		if (heightRatio < 4.0 / 7)
+		{
+			if (tempRatio < 2.0 / 6) { return icePlain; }
+
+			if (tempRatio < 5.0 / 6) { return plains; }
+
+			return desert;
+		}
+
+		if (heightRatio < 5.0 / 7)
+		{
+			if (tempRatio < 2.0 / 6) { return highPlain; }
+
+			if (tempRatio < 4.0 / 6) { return plains; }
+
+			if (tempRatio < 5.0 / 6) { return forest; }
+
+			return desert;
+		}
+
+		if (heightRatio < 6.0 / 7)
+		{
+			if (tempRatio < 2.0 / 6) { return rockMountain; }
+
+			if (tempRatio < 5.0 / 6) { return highPlain; }
+
+			return barrenMountain;
+		}
+
+		return snow;
+
+	}
+
+	if (heightRatio < 3.0 / 7)
+	{
+		if (tempRatio < 3.0 / 6) { return coldWater; }
+
+		return freshWater;
+	}
+
+	if (heightRatio < 4.0 / 7)
+	{
+		if (tempRatio < 2.0 / 6) { return tundraForest; }
+
+		if (tempRatio < 5.0 / 6) { return swamp; }
+
+		return jungle;
+	}
+
+	if (heightRatio < 5.0 / 7)
+	{
+		if (tempRatio < 2.0 / 6) { return tundraForest; }
+
+		if (tempRatio < 4.0 / 6) { return forest; }
+
+		if (tempRatio < 5.0 / 6) { return denseForest; }
+
+		return jungle;
+	}
+
+	if (heightRatio < 6.0 / 7)
+	{
+		if (tempRatio < 2.0 / 6) { return snow; }
+
+		if (tempRatio < 5.0 / 6) { return highForest; }
+
+		return jungleMountain;
+	}
+
+	return snow;
+
+}
+
 int Map::build_image(const char* filepath) {
 	BMP* img = BMP_Create(sizeX, sizeY, 24);
-	float min = terrain.getMinValue();
-	float max = terrain.getMaxValue();
+	//float min = terrain.getMinValue();
+	//float max = terrain.getMaxValue();
+
+	//verbose.setRequiredLevel(0);
 
 	unsigned int x, y;
 	for (x = 0; x < sizeX; x++) {
 		for (y = 0; y < sizeY; y++) {
-			float val = terrain.getHeightValue(x, y);
 
-			unsigned char color = (unsigned char)((val - min) / (max - min) * 8);
-			color *= 32;
-			BMP_SetPixelRGB(img, x, y, color, color, color);
+			//verbose << x * sizeY + y << "/" << sizeX * sizeY << "\r";
+			//float val = terrain.getHeightValue(x, y);
+
+			/*unsigned char color = (unsigned char)((val - min) / (max - min) * 8);
+			color *= 32;*/
+			vector<unsigned int> color = getColor(x, y);
+			BMP_SetPixelRGB(img, x, y, color[0], color[1], color[2]);
 			//BMP_CHECK_ERROR(stdout, -1);
 		}
 	}
 	BMP_WriteFile(img, filepath);
+	//verbose << sizeX * sizeY << "/" << sizeX * sizeY << "\r";
+	//verbose.endRequiredLevel();
 
 	return 0;
 }
