@@ -14,36 +14,43 @@ Map::Map(long int customSeed, size_t sX, size_t sY) {
 	srand(seed);
 	HeightMap* hm;
 
-	Perlin p(rand());
-
-	seed = customSeed;
-	srand(seed);
-	Perlin p1(rand());
-
-	std::vector<future<HeightMap*>> perlins(6);
-	std::vector<unsigned int> chunkSizes = { 50, 50, 61, 20, 7, 4 };
+	std::vector<Perlin> perlins(6);
+	std::vector<future<HeightMap*>> heightMaps(6);
+	std::vector<unsigned int> chunkSizes = { 500, 500, 610, 200, 70, 40 };
 
 	for (unsigned int i = 0; i < 6; i++) {
-		Perlin p(rand());
-		perlins[i] = std::async(std::launch::async, &Perlin::generate, &p, sizeX, sizeY, chunkSizes[i]);
+		perlins[i] = Perlin(rand());
+		heightMaps[i] = std::async(std::launch::async, &Perlin::generate, &perlins[i], sizeX, sizeY, chunkSizes[i]);
 	}
 
 
-	temperature = *perlins[0].get();
-	moisture = *perlins[1].get();
-	HeightMap harm1 = *perlins[2].get();
-	HeightMap harm2 = *perlins[3].get();
-	HeightMap harm3 = *perlins[4].get();
-	HeightMap harm4 = *perlins[5].get();
+	temperature = *heightMaps[0].get();
+	moisture = *heightMaps[1].get();
+	HeightMap harm1 = *heightMaps[2].get();
+	HeightMap harm2 = *heightMaps[3].get();
+	HeightMap harm3 = *heightMaps[4].get();
+	HeightMap harm4 = *heightMaps[5].get();
 
 	terrain = harm1 * 30 + harm2 * 15 + harm3 * 6 + harm4 * 3;        // ne pas hesiter à changer les valeurs pour équilibrer
+	temperature = temperature + harm1*2 + harm2*0.5 + harm3*0.2 + harm4*0.1;
+	moisture = moisture + harm2*5 + harm3*0.2 + harm4*1;
+	terrain.computeMinMaxValues();
+	temperature.computeMinMaxValues();
+	moisture.computeMinMaxValues();
 
 	build_image("C:/Users/benhi/Desktop/map1.bmp");
 
 	cout << "Applying harsh erosion\n";
 	// Applying erosion
 	Erosion erosionH(0.5, 0.1, 0.05, 0.4, 0.00008, false);
-	//erosionH.applyOn(terrain, 0.02*sizeX*sizeY);
+	erosionH.applyOn(terrain, 0.02*sizeX*sizeY);
+
+	Erosion erosionT= Erosion(0.8, 0.9, 0.25, 1, 0.9, true);
+	erosionT.applyOn(temperature, 0.5 * sizeX * sizeY);
+	
+
+	Erosion erosionM = Erosion(0.2, 0.5, 0.05, 1, 0.5, false);
+	erosionM.applyOn(moisture, 0.5 * sizeX * sizeY);
 
 	cout << "Applying smooth erosion\n";
 	// Applying erosion
@@ -52,6 +59,10 @@ Map::Map(long int customSeed, size_t sX, size_t sY) {
 	cout << "Erosion done !\n";
 
 	verbose.endRequiredLevel();
+
+	terrain.computeMinMaxValues();
+	moisture.computeMinMaxValues();
+	temperature.computeMinMaxValues();
 
 	build_image("C:/Users/benhi/Desktop/map2.bmp");
 

@@ -11,8 +11,8 @@ struct RainDrop
 	float water;	// Amount of water in the droplet
 	float sediment; // Ammount of sediment carried by the droplet
 	float speed;	// traveling speed of the droplet
-	vector<float> dir; // flowing direction of the droplet
-	vector<float> pos; // current droplet's position
+	std::vector<float> dir; // flowing direction of the droplet
+	std::vector<float> pos; // current droplet's position
 };
 
 class Erosion
@@ -34,6 +34,15 @@ private:
 public:
 	Erosion();
 
+	/*
+	* Constructor
+	* @param inertia
+	* @param depositionRate
+	* @param evaportationRate
+	* @param radius
+	* @param erosionFactor
+	* @param sourceErosion
+	*/
 	Erosion(float inertia, float depositionRate, float evaporationRate, float radius, float erosionFactor, bool sourceErosion) :
 		inertia(inertia), depositionRate(depositionRate), evaporationRate(evaporationRate), radius(radius), erosionFactor(erosionFactor), sourceErosion(sourceErosion) {};
 

@@ -20,7 +20,7 @@ std::vector<unsigned int> initVector()
 
 unsigned int Verbose::level;
 unsigned int Verbose::maxRequiredLevel;
-vector<unsigned int> Verbose::requiredLevels = initVector();
+std::vector<unsigned int> Verbose::requiredLevels = initVector();
 
 int main() {
 
@@ -31,7 +31,7 @@ int main() {
     verbose << "Program Launched\n";
     verbose.endRequiredLevel();
 
-    Map map(216, 200, 200);
+    Map map(216, 1690, 1080);
 }
 
 // Exécuter le programme : Ctrl+F5 ou menu Déboguer > Exécuter sans débogage

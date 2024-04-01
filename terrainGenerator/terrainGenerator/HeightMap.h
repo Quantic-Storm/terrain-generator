@@ -3,19 +3,19 @@
 #include <iostream>
 #include "Verbose.h"
 
-using namespace std;
-
 class HeightMap {
 private:
-	vector<vector<float>> terrain;
+	std::vector<std::vector<float>> terrain;
+	float min_value;
+	float max_value;
 
 public:
 	HeightMap() {};
 	HeightMap(unsigned int width, unsigned int length) {
-		terrain = vector<vector<float>>(width);
+		terrain = std::vector<std::vector<float>>(width);
 		unsigned int i;
 		for (i = 0; i < terrain.size(); i++) {
-			terrain[i] = vector<float>(length);
+			terrain[i] = std::vector<float>(length);
 		}
 	}
 	HeightMap(HeightMap& hm) = default;
@@ -24,7 +24,7 @@ public:
 
 	HeightMap& operator=(const HeightMap& other) = default;
 	HeightMap operator+(const HeightMap& other);
-	HeightMap operator*(int coef);
+	HeightMap operator*(float coef);
 
 
 	float getMaxValue();
@@ -36,21 +36,23 @@ public:
 	void setHeightValue(unsigned int x, unsigned int y, float value) { terrain[x][y] = value; }
 	void addHeightValue(unsigned int x, unsigned int y, float value) { terrain[x][y] += value; }
 
-	void print();
+
+	void computeMinMaxValues();
+
 	void print() {
 		float min = 10000, max = -10000;
 		int i = 0;
-		for (vector<float> col : terrain) {
-			cout << i << "\t";
+		for (std::vector<float> col : terrain) {
+			std::cout << i << "\t";
 			i++;
 			for (float el : col) {
 				if (el < min) min = el;
 				if (el > max) max = el;
-				cout << ((el > 0) ? "#" : " ");
+				std::cout << ((el > 0) ? "#" : " ");
 			}
-			cout << endl;
+			std::cout << std::endl;
 		}
-		cout << "min = " << min << ", max = " << max << endl;
+		std::cout << "min = " << min << ", max = " << max << std::endl;
 	}
 
 };

@@ -3,6 +3,30 @@
 
 void Erosion::applyOn(HeightMap& heightMap, unsigned int nbDroplets)
 {
+	if (sourceErosion)
+	{
+		verbose << "Computing source points...\n";
+		float maxHeight = heightMap.getMaxValue();
+
+		for (unsigned int x = 0; x < heightMap.getWidth(); x++)
+		{
+			for (unsigned int y = 0; y < heightMap.getLength(); y++)
+			{
+				if (0.5 * maxHeight < heightMap.getHeightValue(x, y) && heightMap.getHeightValue(x, y) < 0.95 * maxHeight)
+				{
+					std::vector<unsigned int> sourcePoint;
+					sourcePoint.push_back(x);
+					sourcePoint.push_back(y);
+
+					sources.push_back(sourcePoint);
+				}
+			}
+		}
+		std::shuffle(sources.begin(), sources.end(), std::default_random_engine());
+		verbose << "nb of source points detected : " << (unsigned int)sources.size() << "\n";
+	}
+
+
 	for (unsigned int i = 0; i < nbDroplets; i++)
 	{
 		if ((i+1) % 10000 == 0) {
@@ -173,31 +197,6 @@ RainDrop Erosion::createDroplet(HeightMap& heightMap) // Mettre heightMap en con
 
 RainDrop Erosion::createSourceDroplet(HeightMap& heightMap)
 {
-	// If no summit was computed, check for them
-	if (sources.size() == 0)
-	{
-		verbose << "Computing source points...\n";
-		float maxHeight = heightMap.getMaxValue();
-
-		for (unsigned int x = 0; x < heightMap.getWidth(); x++)
-		{
-			for (unsigned int y = 0; y < heightMap.getLength(); y++)
-			{
-				if(0.5 * maxHeight < heightMap.getHeightValue(x, y) && heightMap.getHeightValue(x, y) < 0.95 * maxHeight)
-				{ 
-					std::vector<unsigned int> sourcePoint;
-					sourcePoint.push_back(x);
-					sourcePoint.push_back(y);
-
-					sources.push_back(sourcePoint);
-				}
-			}
-		}
-		std::shuffle(sources.begin(), sources.end(), std::default_random_engine());
-
-		verbose << "nb of source points detected : " << sources.size() << "\n";
-	}
-
 	// If no summit where found, spawn at random position
 	if (sources.size() == 0) { return createDroplet(heightMap); }
 

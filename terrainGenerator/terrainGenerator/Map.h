@@ -30,7 +30,7 @@ private:
 	std::vector<unsigned int> desert = {255, 255, 0};
 	std::vector<unsigned int> jungle = {51, 102, 255};
 	std::vector<unsigned int> icePlain = {218, 233, 248};
-	std::vector<unsigned int> swamp = {162, 144, 52};
+	std::vector<unsigned int> swamp = {70, 112, 27};
 	std::vector<unsigned int> coldWater = {166, 201, 236};
 	std::vector<unsigned int> freshWater = {77, 147, 217};
 	std::vector<unsigned int> coldOcean = {21, 61, 100};
