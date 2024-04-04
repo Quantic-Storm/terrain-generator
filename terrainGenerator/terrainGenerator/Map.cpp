@@ -14,6 +14,8 @@ Map::Map(long int customSeed, size_t sX, size_t sY) {
 	srand(seed);
 	HeightMap* hm;
 
+	verbose.setRequiredLevel(1);
+
 	std::vector<Perlin> perlins(6);
 	std::vector<future<HeightMap*>> heightMaps(6);
 	std::vector<unsigned int> chunkSizes = { 500, 500, 610, 200, 70, 40 };
