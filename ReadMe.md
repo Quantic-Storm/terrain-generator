@@ -1,6 +1,6 @@
 # Génération de cartes
 
-Ce projet a été réalisé par @Quantic-Storm and @benoitStH.
+Ce projet a été réalisé par [Quantic-Storm](https://github.com/Quantic-Storm) and [benoitStH](https://github.com/benoitStH).
 
 ## Installation
 
