@@ -12,6 +12,7 @@ void Erosion::applyOn(HeightMap& heightMap, unsigned int nbDroplets)
 		{
 			for (unsigned int y = 0; y < heightMap.getLength(); y++)
 			{
+				// If a point on the heightMap is in our threshold, save its coordinates 
 				if (0.5 * maxHeight < heightMap.getHeightValue(x, y) && heightMap.getHeightValue(x, y) < 0.95 * maxHeight)
 				{
 					std::vector<unsigned int> sourcePoint;
@@ -56,6 +57,9 @@ void Erosion::applyDroplet(HeightMap& heightMap)
 		droplet = createDroplet(heightMap);
 	}
 
+	verbose.setRequiredLevel(2);
+
+	// For each droplet's iteration
 	bool outOfBounds = false;
 	for (unsigned int nbIter = 0; nbIter < 50; nbIter++)
 	{
@@ -163,25 +167,28 @@ void Erosion::applyDroplet(HeightMap& heightMap)
 		DepositOn(heightMap, droplet, droplet.sediment);
 		droplet.sediment = 0;
 	}
+
+	verbose.endRequiredLevel();
+
 }
 
-RainDrop Erosion::createDroplet(HeightMap& heightMap) // Mettre heightMap en const
+RainDrop Erosion::createDroplet(const HeightMap& heightMap)
 {
-	// Generate a raindrop at random position on the height map
+	// Select a random position on the height map
 	unsigned int length = heightMap.getLength();
 	unsigned int width = heightMap.getWidth();
 
 	float x, y;
 
-
 	x = (width - 1) * std::rand() / float(RAND_MAX);
 	y = (length - 1) * std::rand() / float(RAND_MAX);
 
-
+	// Select a random direction
 	float angle = std::rand() / float(RAND_MAX);
 	float dir_x = cos(angle * 2.0 * PI);
 	float dir_y = sin(angle * 2.0 * PI);
 
+	// Generate droplet
 	RainDrop droplet;
 	droplet.pos.push_back(x);
 	droplet.pos.push_back(y);
@@ -195,7 +202,7 @@ RainDrop Erosion::createDroplet(HeightMap& heightMap) // Mettre heightMap en con
 	return droplet;
 }
 
-RainDrop Erosion::createSourceDroplet(HeightMap& heightMap)
+RainDrop Erosion::createSourceDroplet(const HeightMap& heightMap)
 {
 	// If no summit where found, spawn at random position
 	if (sources.size() == 0) { return createDroplet(heightMap); }
@@ -205,10 +212,12 @@ RainDrop Erosion::createSourceDroplet(HeightMap& heightMap)
 	float y = sources[sourcePointNumber][1];
 	sourcePointNumber = (sourcePointNumber + 1) % sources.size(); // Next index (loop back if at the end of the list)
 
+	// Select random direction
 	float angle = std::rand() / float(RAND_MAX);
 	float dir_x = cos(angle * 2.0 * PI);
 	float dir_y = sin(angle * 2.0 * PI);
 
+	// Generate droplet
 	RainDrop droplet;
 	droplet.pos.push_back(x);
 	droplet.pos.push_back(y);
@@ -240,21 +249,22 @@ float Erosion::interpolatedHeight(HeightMap& heightMap, const RainDrop& droplet)
 	float PXY1 = heightMap.getHeightValue(x, y1);
 	float PX1Y1 = heightMap.getHeightValue(x1, y1);
 
-	float height = (PXY * (1 - u) * (1 - v) + PX1Y * u * (1 - v) + PXY1 * (1 - u) * v + PX1Y1 * u * v);
+	float interpolatedHeight = (PXY * (1 - u) * (1 - v) + PX1Y * u * (1 - v) + PXY1 * (1 - u) * v + PX1Y1 * u * v);
 	
-	return height;
+	return interpolatedHeight;
 }
 
 std::vector<float> Erosion::interpolatedGradient(HeightMap& heightMap, const RainDrop& droplet)
 {
 	std::vector<float> gradient;
 
-	// Get its grid position and offset
+	// Get its grid position (x, y) and offset (u, v)
 	unsigned int x = unsigned int(droplet.pos[0]);
 	unsigned int y = unsigned int(droplet.pos[1]);
 	float u = droplet.pos[0] - x;
 	float v = droplet.pos[1] - y;
 
+	// Handling border cases : we assume the pixel are the same beyond the left/bottom border
 	unsigned int x1 = (x+1 >= heightMap.getWidth() ? x : x + 1);
 	unsigned int y1 = (y+1 >= heightMap.getLength() ? y : y + 1);
 
@@ -264,6 +274,7 @@ std::vector<float> Erosion::interpolatedGradient(HeightMap& heightMap, const Rai
 	float PXY1 = heightMap.getHeightValue(x, y1);
 	float PX1Y1 = heightMap.getHeightValue(x1, y1);
 
+	// Computing gradients
 	float gradient_X = (PX1Y - PXY) * (1 - v) + (PX1Y1 - PXY1) * v;
 	float gradient_Y = (PXY1 - PXY) * (1 - u) + (PX1Y1 - PX1Y) * u;
 
@@ -275,39 +286,37 @@ std::vector<float> Erosion::interpolatedGradient(HeightMap& heightMap, const Rai
 
 void Erosion::ErodeFrom(HeightMap& heightMap, const RainDrop& droplet, float amountToErode)
 {
-	float cumulativeErosionRate = 0;
-	std::vector<float> erosionWeights;
+	float cumulativeErosionRate = 0; // Total amount of erosion rate
+	std::vector<float> erosionWeights;  // Erosion rate on each pixel
 
-	amountToErode = (amountToErode > 0.0001 ? amountToErode : 0);
-
-	if (radius * 2 <= 1)
+	// Do nothing if the amount is negligible
+	if (amountToErode < 0.0001)
 	{
-		unsigned int x = unsigned int(droplet.pos[0]);
-		unsigned int y = unsigned int(droplet.pos[1]);
-
-		//verbose << "ErodedAmount : " << erosionFactor * amountToErode << "\n";
-		//verbose << "X : " << unsigned int(droplet.pos[0]) << "  Y : " << unsigned int(droplet.pos[1]) << "\n";
-
-		heightMap.setHeightValue(x, y, heightMap.getHeightValue(x, y) - erosionFactor * amountToErode);
 		return;
 	}
 
-	for (float i = droplet.pos[0]-radius; i < droplet.pos[0] + radius; i += 1.0)
+	float offset = (radius < 1.0 ? radius : 1.0);
+
+	// We look for pixels inside the droplet's radius
+	for (float i = droplet.pos[0]-radius; i < droplet.pos[0] + radius; i += offset)
 	{
-		for (float j = droplet.pos[1] - radius; j < droplet.pos[1] + radius; j += 1.0)
+		for (float j = droplet.pos[1] - radius; j < droplet.pos[1] + radius; j += offset)
 		{
+			// ignoring out of bounds pixels
+			if (i < 0 || i >= heightMap.getWidth()) { continue; }
+			if (j < 0 || j >= heightMap.getLength()) { continue; } 
 
-			if (i < 0 || i > heightMap.getWidth()) { continue; }
-			if (j < 0 || j > heightMap.getLength()) { continue; } 
-
+			// pixel's coordinates
 			unsigned int x = unsigned int(i);
 			unsigned int y = unsigned int(j);
 
+			// computing erosion rate on this pixel
 			float dist2_x = (x - droplet.pos[0]) * (x - droplet.pos[0]);
 			float dist2_y = (y - droplet.pos[1]) * (y - droplet.pos[1]);
 			float erosionRate = radius - sqrt(dist2_x+dist2_y);
 			erosionRate = (erosionRate > 0.0001 ? erosionRate : 0);
 
+			// saving it and computing total erosion rate
 			cumulativeErosionRate += erosionRate;
 			erosionWeights.push_back(erosionRate);
 		}
@@ -315,21 +324,25 @@ void Erosion::ErodeFrom(HeightMap& heightMap, const RainDrop& droplet, float amo
 
 	if (cumulativeErosionRate == 0) { return; }
 
+	// For each pixel in the droplet's radius
 	unsigned int k = 0;
 	for (float i = droplet.pos[0] - radius; i < droplet.pos[0] + radius; i += 1.0)
 	{
 		for (float j = droplet.pos[1] - radius; j < droplet.pos[1] + radius; j += 1.0)
 		{
-			if (i < 0 || i > heightMap.getWidth()) { continue; }
-			if (j < 0 || j > heightMap.getLength()) { continue; }
+			// ignoring out of bounds pixels
+			if (i < 0 || i >= heightMap.getWidth()) { continue; }
+			if (j < 0 || j >= heightMap.getLength()) { continue; }
 
+			// pixel's coordinates
 			unsigned int x = unsigned int(i);
 			unsigned int y = unsigned int(j);
 
-			// Remove an amount of sediment
-
-			//verbose << "ErodedAmount : " << erosionFactor * amountToErode * erosionWeights[k] / cumulativeErosionRate << "\n";
-			//verbose << "X : " << unsigned int(droplet.pos[0]) << "  Y : " << unsigned int(droplet.pos[1]) << "\n";
+			// Remove an amount of sediment according to the erosion rate ratio and factor
+			verbose.setRequiredLevel(3);
+			verbose << "ErodedAmount : " << erosionFactor * amountToErode * erosionWeights[k] / cumulativeErosionRate << "\n";
+			verbose << "X : " << unsigned int(droplet.pos[0]) << "  Y : " << unsigned int(droplet.pos[1]) << "\n";
+			verbose.endRequiredLevel();
 			heightMap.setHeightValue(x, y, heightMap.getHeightValue(x, y) - erosionFactor * amountToErode * erosionWeights[k] / cumulativeErosionRate);
 			k++;
 		}
