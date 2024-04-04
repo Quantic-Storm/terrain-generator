@@ -33,7 +33,7 @@ public:
 
 		for (unsigned int i = 0; i < 256; i++)
 		{
-			randoms.push_back((rand() % 256));
+			randoms[i] = (rand() % 256);
 		}
 	}
 

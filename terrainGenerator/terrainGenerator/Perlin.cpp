@@ -187,9 +187,9 @@ HeightMap* Perlin::generate(unsigned int xSize, unsigned int ySize, int chunkSiz
 	}
 
 	timeEnd = std::chrono::high_resolution_clock::now();
-	duration = std::chrono::duration_cast<std::chrono::seconds>(timeEnd - timeStart).count();
+	duration = std::chrono::duration_cast<std::chrono::milliseconds>(timeEnd - timeStart).count();
 
-	verbose << duration << "\n";
+	verbose << duration << " ms \n";
 
 	return res;
 }

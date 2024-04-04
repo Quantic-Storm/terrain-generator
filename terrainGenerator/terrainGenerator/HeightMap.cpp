@@ -18,7 +18,7 @@ HeightMap HeightMap::operator+(const HeightMap& other) {
 	return res;
 }
 
-HeightMap HeightMap::operator*(int coef) {
+HeightMap HeightMap::operator*(float coef) {
 
 	HeightMap res(getWidth(), getLength());
 	unsigned int i, j;
@@ -30,58 +30,31 @@ HeightMap HeightMap::operator*(int coef) {
 	return res;
 }
 
-float HeightMap::getMaxValue() {
+void HeightMap::computeMinMaxValues()
+{
 	float max = std::numeric_limits<float>::min();
 
-	for (vector<float>col : terrain) {
+	for (std::vector<float>col : terrain) {
 		for (float el : col) {
 			if (el > max) max = el;
 		}
 	}
-	return max;
+	max_value = max;
+
+	float min = std::numeric_limits<float>::max();
+
+	for (std::vector<float>col : terrain) {
+		for (float el : col) {
+			if (el < min) min = el;
+		}
+	}
+	min_value = min;
+}
+
+float HeightMap::getMaxValue() {
+	return max_value;
 }
 
 float HeightMap::getMinValue() {
-	float min = std::numeric_limits<float>::max();
-
-	for (vector<float>col : terrain) {
-		for (float el : col) {
-			if (el < min) min = el;
-		}
-	}
-	return min;
-}
-
-
-void HeightMap::print() {	//todo faire affichage custom entre min et max
-	float min = std::numeric_limits<float>::max(),
-		max = std::numeric_limits<float>::min();
-	int i = 0;
-
-	for (vector<float>col : terrain) {
-		for (float el : col) {
-			if (el < min) min = el;
-			if (el > max) max = el;
-		}
-	}
-	float interval = max - min;
-	float quarter = interval / 4;
-
-	for (vector<float> col : terrain) {
-		cout << i << "\t";
-		i++;
-		for (float el : col) {
-			char symbol = ' ';
-
-			if (el < min + quarter) symbol = ' ';
-			else if (el < min + 2 * quarter) symbol = '.';
-			else if (el < min + 3 * quarter) symbol = '*';
-			else symbol = '#';
-
-			cout << symbol;
-		}
-		cout << endl;
-	}
-	cout << "min = " << min << ", max = " << max << endl;
-
+	return min_value;
 }
