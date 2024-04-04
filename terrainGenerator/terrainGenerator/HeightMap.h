@@ -5,13 +5,14 @@
 
 class HeightMap {
 private:
-	std::vector<std::vector<float>> terrain;
-	float min_value;
-	float max_value;
+	std::vector<std::vector<float>> terrain;	// tableau 2D des valeurs en chaque point
+	float min_value;							// valeur minimale trouvée dans le heightmap
+	float max_value;							// valeur maximale trouvée dans le heightmap
 
 public:
-	HeightMap() {};
+	HeightMap() { min_value = max_value = .0; }
 	HeightMap(unsigned int width, unsigned int length) {
+		min_value = max_value = .0;
 		terrain = std::vector<std::vector<float>>(width);
 		unsigned int i;
 		for (i = 0; i < terrain.size(); i++) {

@@ -7,10 +7,10 @@ using namespace std;
 
 class Perlin {
 private:
-	long seed;
-	vector<char> randoms;
+	long seed;					// seed de génération
+	vector<char> randoms;		// tableau de randoms générés à partir de la seed
 
-	Verbose verbose;
+	Verbose verbose;			// gestionnaire de verbosité
 
 
 	//allow to shuffle the values of randoms

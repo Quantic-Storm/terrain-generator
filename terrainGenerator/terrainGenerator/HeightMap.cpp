@@ -3,7 +3,7 @@
 #include <limits>
 
 
-
+// opérateur + permettant de sommer deux heightMap de meme dimensions point par point
 HeightMap HeightMap::operator+(const HeightMap& other) {
 	if (other.getLength() != getLength() || other.getWidth() != getWidth())
 		throw std::invalid_argument("heightmaps are not the same size");
@@ -18,6 +18,7 @@ HeightMap HeightMap::operator+(const HeightMap& other) {
 	return res;
 }
 
+// opérateur de multiplication par un réel
 HeightMap HeightMap::operator*(float coef) {
 
 	HeightMap res(getWidth(), getLength());
@@ -30,31 +31,28 @@ HeightMap HeightMap::operator*(float coef) {
 	return res;
 }
 
+// trouve et enregistre les valeurs min et max dans le heightmap
 void HeightMap::computeMinMaxValues()
 {
 	float max = std::numeric_limits<float>::min();
-
-	for (std::vector<float>col : terrain) {
-		for (float el : col) {
-			if (el > max) max = el;
-		}
-	}
-	max_value = max;
-
 	float min = std::numeric_limits<float>::max();
 
 	for (std::vector<float>col : terrain) {
 		for (float el : col) {
+			if (el > max) max = el;
 			if (el < min) min = el;
 		}
 	}
+	max_value = max;
 	min_value = min;
 }
 
+// retourne la valeur maximale trouvée dans le heightmap
 float HeightMap::getMaxValue() {
 	return max_value;
 }
 
+// retourne la valeur minimale trouvée dans le heightmap
 float HeightMap::getMinValue() {
 	return min_value;
 }

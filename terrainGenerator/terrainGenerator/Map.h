@@ -5,17 +5,18 @@
 
 class Map {
 private:
-	size_t sizeX;
-	size_t sizeY;
-	long int seed;
-	HeightMap terrain;
-	HeightMap temperature;
-	HeightMap moisture;
+	size_t sizeX;				// taille sur l'axe X
+	size_t sizeY;				// taille sur l'axe Y
+	long int seed;				// seed de génération
+	HeightMap terrain;			// heightmap contenant les valeurs topologiques
+	HeightMap temperature;		// heightmap des températures
+	HeightMap moisture;			// heightmap de l'humidité
 
-	Verbose verbose;
+	Verbose verbose;			// gestionnaire de verbosité 
 
 	std::vector<unsigned int> getColor(unsigned int x, unsigned int y);
 
+	// définition des couleurs pour chaque climat
 	std::vector<unsigned int> snow = {255, 255, 255};
 	std::vector<unsigned int> rockMountain = {173, 173, 173};
 	std::vector<unsigned int> highPlain = {218, 242, 208};

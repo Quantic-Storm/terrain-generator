@@ -2,14 +2,9 @@
 //
 
 #include <iostream>
+#include <ctime>
 #include "Map.h"
 
-/*
-int main()
-{
-    HeightMap hm = HeightMap(25, 24);
-    verbose << hm.getWidth() << ", " << hm.getLength() << std::endl;
-}*/
 
 std::vector<unsigned int> initVector()
 {
@@ -22,25 +17,46 @@ unsigned int Verbose::level;
 unsigned int Verbose::maxRequiredLevel;
 std::vector<unsigned int> Verbose::requiredLevels = initVector();
 
-int main() {
 
+
+/*
+* Fonction principale de notre programme.
+* Gère les paramètres -vrb et -seed passés à l'exécutable
+* Lance le générateur de carte, puis enregistre le fichier dans "map_img.bmp"
+* 
+*/
+int main(int argc, char* argv[]) {
+
+    // paramètres par défaut
+    unsigned int verboseLvl = 0;
+    srand(time(0));
+    unsigned int seed = rand();
+
+
+    //lecture des éventuels paramètres (voir le README pour les détails des params)
+    for (unsigned int i = 0; i < argc-1; i++) {
+        
+        // lecture du paramètre de verbose
+        if (std::string(argv[i]) == std::string("-vrb")) {
+            verboseLvl = atoi(argv[i + 1]);
+        }
+        // lecture du paramètre de seed
+        if (std::string(argv[i]) == std::string("-seed")) {
+            seed = atoi(argv[i + 1]);
+        }
+    }
+    
+    // creation verbose
     Verbose verbose;
-    verbose.setLevel(0);
+    verbose.setLevel(verboseLvl);
 
     verbose.setRequiredLevel(1);
     verbose << "Program Launched\n";
     verbose.endRequiredLevel();
 
-    Map map(216, 1690, 1080);
+    // génération de la carte
+    Map map(seed, 1690, 1080);
+
+    // enregistrement dans le fichier
+    map.build_image("map_img.bmp");
 }
-
-// Exécuter le programme : Ctrl+F5 ou menu Déboguer > Exécuter sans débogage
-// Déboguer le programme : F5 ou menu Déboguer > Démarrer le débogage
-
-// Astuces pour bien démarrer : 
-//   1. Utilisez la fenêtre Explorateur de solutions pour ajouter des fichiers et les gérer.
-//   2. Utilisez la fenêtre Team Explorer pour vous connecter au contrôle de code source.
-//   3. Utilisez la fenêtre Sortie pour voir la sortie de la génération et d'autres messages.
-//   4. Utilisez la fenêtre Liste d'erreurs pour voir les erreurs.
-//   5. Accédez à Projet > Ajouter un nouvel élément pour créer des fichiers de code, ou à Projet > Ajouter un élément existant pour ajouter des fichiers de code existants au projet.
-//   6. Pour rouvrir ce projet plus tard, accédez à Fichier > Ouvrir > Projet et sélectionnez le fichier .sln.
