@@ -6,6 +6,11 @@
 
 #define PI 3.14159265358979323846
 
+/*
+Represent a droplet of water
+It has a position, direction, speed, amount of sediment and amount of water
+The position and direction is a vector of float
+*/
 struct RainDrop
 {
 	float water;	// Amount of water in the droplet
@@ -15,33 +20,39 @@ struct RainDrop
 	std::vector<float> pos; // current droplet's position
 };
 
+/*
+Class in charge of applying erosion on a given HeightMap
+Has two generation strategy :
+Uniform - Spawning droplets of water everywhere
+SourcePoint - Spawning droplets where the height is above a threshold (50% of maximum height)
+*/
 class Erosion
 {
 private:
-	//float values; // necessarry constants for erosion (None for now)
+	// necessarry constants for erosion
 	float inertia = 0.5; // [0, 1]
 	float depositionRate = 0.02; // [0, 1]
 	float evaporationRate = 0.01; // [0, 1]
 	float radius = 0.25; // [0, 1]
 	float erosionFactor = 0.08; // [0, 1]
 
-	bool sourceErosion = false;
+	bool sourceErosion = false;  // Are we spawning droplet on mountains ?
 	std::vector<std::vector<unsigned int>> sources; // list of possible spawn point (x, y) for droplets (when source erosion enabled)
 	unsigned int sourcePointNumber = 0; // index of the current source point used
 
-	Verbose verbose;
+	Verbose verbose;  // Display verbose message
 
 public:
 	Erosion();
 
 	/*
 	* Constructor
-	* @param inertia
-	* @param depositionRate
-	* @param evaportationRate
-	* @param radius
-	* @param erosionFactor
-	* @param sourceErosion
+	* @param inertia : initial speed of a droplet [0, 1]
+	* @param depositionRate : how much of sediment will be deposited by the droplet [0, 1]
+	* @param evaportationRate : how much of the droplet's water will evaporate every iteration [0, 1]
+	* @param radius : droplet's radius [0, 1]
+	* @param erosionFactor : how much of the amount to erode will be actually taken by the droplet [0, 1]
+	* @param sourceErosion : Are we spawning droplets on mountains ?
 	*/
 	Erosion(float inertia, float depositionRate, float evaporationRate, float radius, float erosionFactor, bool sourceErosion) :
 		inertia(inertia), depositionRate(depositionRate), evaporationRate(evaporationRate), radius(radius), erosionFactor(erosionFactor), sourceErosion(sourceErosion) {};
@@ -68,14 +79,14 @@ private:
 	 * @param heightMap The map where the droplet will be generated.
 	 * @return A RainDrop structure representing the generated Droplet
 	 */
-	RainDrop createDroplet(HeightMap& heightMap);
+	RainDrop createDroplet(const HeightMap& heightMap);
 
 	/**
 	* Method that generate a rain drop on the given heightMap at a random summit (>80% maxHeight)
 	* @param heightMap The map where the droplet will be generated
 	* @return A RainDrop structure representing the generated droplet
 	*/
-	RainDrop createSourceDroplet(HeightMap& heightMap);
+	RainDrop createSourceDroplet(const HeightMap& heightMap);
 
 	/**
 	 * Method that return the height of a rain drop on a given heightMap
